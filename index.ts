@@ -22,14 +22,19 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
         if(usehdr.includes(key)) {
         returnres["headers"][key]=value } 
       });
-    console.log(returnres)
-
+    //console.log(returnres)
     returnres["content"]=await response.text()
-    //const buf = fflate.strToU8('Hello world!');
-    //// The default compression method is gzip
-    //// Increasing mem may increase performance at the cost of memory
-    //// The mem ranges from 0 to 12, where 4 is the default
-    //const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
+    if(saveurl!="dontsave") {
+        try {
+           const buf = fflate.strToU8('Hello world!');
+           // The default compression method is gzip
+           // Increasing mem may increase performance at the cost of memory
+           // The mem ranges from 0 to 12, where 4 is the default
+           const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
+        } catch(e) {
+            console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
+        }
+    }
     if(onlysave) { delete returnres.content }
     return returnres;
     //return response.json(); // For JSON Response
@@ -55,7 +60,17 @@ Deno.serve( async (req: Request) =>  {
         let save_only=false
         let saveurl="dontsave"
         if(json.save_only) { save_only=true }
-        if(json.saveurl)   { saveurl=json.saveurl }
+        if(json.saveurl)   { 
+            saveurl=json.saveurl
+            if(!saveurl.endsWith("/")) {saveurl=saveurl+"/"}
+            targetpath="feedarchive/"+format(new Date(), "yyyy-MM-dd_HH",{ utc: true })+"/"
+
+            console.log("MAKE FOLDER "+targetpath)
+//            const foldresponse = await fetch(saveurl+, {
+//                method: "POST",
+//              });
+              
+        }
         if(json.urls) {
             let urllist=json.urls
             let rawresults=[]
