@@ -47,8 +47,8 @@ Deno.serve( async (req: Request) =>  {
                 ///}
                 const chunkSize = workercount;
                 let urlchunks=[]
-                for (let i = 0; i < array.length; i += chunkSize) {
-                    const chunk = array.slice(i, i + chunkSize);
+                for (let i = 0; i < urllist.length; i += chunkSize) {
+                    const chunk = urllist.slice(i, i + chunkSize);
                     urlchunks.push(chunk)
                 }
                 for (const batch in urlchunks) {
