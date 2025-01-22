@@ -15,9 +15,10 @@ Deno.serve( async (req: Request) =>  {
     if (req.method === "POST") {
         //console.log(await req.body)
         const inbody=await req.text()
+        let json={}
         try {
             //const json = await req.body.json()
-            const json=JSON.parse(inbody)
+            json=JSON.parse(inbody)
 
         } catch(e) {
             console.log("err+not+json")
