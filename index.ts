@@ -74,9 +74,7 @@ Deno.serve( async (req: Request) =>  {
                         console.log('Total Fulfilled:', fulfilled);
                         console.log('Total Rejected:', rejected);
                         console.log('— — — — — — — — — — — — — — — — — — — — ')
-
-
-                }
+            }
             //console.log('SHA2-256 of '+urllist[idx], sha256(urllist[idx], "utf8", "hex"))
             let counter=0
             for (const idx in urllist) {
