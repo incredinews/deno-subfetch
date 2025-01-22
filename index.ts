@@ -68,12 +68,13 @@ Deno.serve( async (req: Request) =>  {
                 const foldcheckres = await fetch(saveurl+targetpath, {
                     method: "MKCOL",
                   });
-                if(accepted_propfn.includes(foldcheckres.status)) {
+                if(!accepted_propfn.includes(foldcheckres.status)) {
                     saveurl="dontsave"
                 } else {
                     saveurl=saveurl+targetpath
                 }
             } else {
+                console.log("save_disabled_foldresponse_status:"+foldresponse.status)
                 saveurl="dontsave"
             }
         }
