@@ -33,7 +33,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
            // Increasing mem may increase performance at the cost of memory
            // The mem ranges from 0 to 12, where 4 is the default
            const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
-           savename=sha256(urllist[idx], "utf8", "hex")+"_"+format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })+".json.gz"
+           savename=sha256(myurl, "utf8", "hex")+"_"+format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })+".json.gz"
            console.log("saving "+myurl+"to "+savename)
            sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
