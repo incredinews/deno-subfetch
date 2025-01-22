@@ -12,9 +12,11 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     console.log(response)
     let returnres={
         "url": myurl,
+        "status:":    response.status,
+        "statusText": response.statusText,
+        "redirected": response.redirected,
+        "headers": await response.headers.getAll(),
         "content": await response.text(),
-        "headers": response.headers,
-        "status:": response.status
     }
     //const buf = fflate.strToU8('Hello world!');
     //// The default compression method is gzip
