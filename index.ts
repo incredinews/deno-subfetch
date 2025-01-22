@@ -27,7 +27,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     returnres["content"]=await response.text()
     if(dsturl!="dontsave") {
     returnres.stored=false
-    console.log("saving")
+    await console.log("saving")
         try {
            const buf = fflate.strToU8(JSON.stringify);
            // The default compression method is gzip
@@ -35,7 +35,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
            // The mem ranges from 0 to 12, where 4 is the default
            const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
            savename=sha256(myurl, "utf8", "hex")+"_"+format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })+".json.gz"
-           console.log("saving "+myurl+"to "+savename)
+           await console.log("saving "+myurl+"to "+savename)
            sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
             method: 'PUT',
