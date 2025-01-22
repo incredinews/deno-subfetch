@@ -13,7 +13,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     let returnres={
         "url": myurl,
         "content": await response.text(),
-        "headers": response.headers
+        "headers": response.headers,
         "status:": response.status
     }
     //const buf = fflate.strToU8('Hello world!');
