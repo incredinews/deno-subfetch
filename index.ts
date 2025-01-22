@@ -16,9 +16,11 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
         "redirected": response.redirected,
         "headers": {}
     }
+    usehdr=["cache-control","conten-type","date","x-robots-tag","x-generated-by","x-content-type-options"]
     response.headers.forEach((value, key) => {
         //console.log(`${key} ==> ${value}`);
-        returnres["headers"][key]=value
+        if(usehdr.includes(key)) {
+        returnres["headers"][key]=value } 
       });
     console.log(returnres)
 
