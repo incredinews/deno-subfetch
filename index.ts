@@ -90,6 +90,7 @@ Deno.serve( async (req: Request) =>  {
             const accepted_propfn=[200,207]
             if(accepted_status.includes(foldresponse.status)) {
                 //verify folder existence
+                console.log("checking" +saveurl+targetpath)
                 const foldcheckres = await fetch(saveurl+targetpath, {
                     method: "PROPFIND",
                   });
