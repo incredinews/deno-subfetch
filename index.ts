@@ -32,9 +32,8 @@ Deno.serve( async (req: Request) =>  {
             let workers=[]
             let workercount=5
             for (let i = 0; i < workercount; i++) {
-                const worker = new Worker("./worker.ts", {
-                  type: "module",
-                });
+                const worker = new Worker(import.meta.resolve("./worker.ts")", { type: "module"});
+                
                 workers.push(worker);
                 worker.onmessage = (evt) => { 
                   console.log("Received by parent: ", evt.data);
