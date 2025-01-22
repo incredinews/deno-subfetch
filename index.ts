@@ -1,6 +1,7 @@
 import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
+import * as fflate from 'https://cdn.skypack.dev/fflate@0.8.2?min';
 
-const fetchResponse = async (myurl): Promise<any> => {
+const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     const response = await fetch(myurl, {
         method: "GET",
         //headers: {
@@ -8,12 +9,19 @@ const fetchResponse = async (myurl): Promise<any> => {
         //},
     });
     //let myres=response.json()
+    console.log(response)
     let returnres={
         "url": myurl,
         "content": await response.text(),
-        "headers": response.headers,
+        "headers": response.headers
         "status:": response.status
     }
+    //const buf = fflate.strToU8('Hello world!');
+    //// The default compression method is gzip
+    //// Increasing mem may increase performance at the cost of memory
+    //// The mem ranges from 0 to 12, where 4 is the default
+    //const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
+    if(onlysave) { delete returnres.content }
     return returnres;
     //return response.json(); // For JSON Response
     //   return response.text(); // For HTML or Text Response
@@ -34,14 +42,23 @@ Deno.serve( async (req: Request) =>  {
         }
         //console.log(json);
         //console.log(await githubResponse())
+        // do we return only status or full content
+        let save_only=false
+        let saveurl="dontsave"
+        if(json.saveurl) {
+           saveurl=json.saveurl
+           if(json.save_only) {
+            save_only=true
+           }
+        }
         if(json.urls) {
             let urllist=json.urls
             let rawresults=[]
             let workers=[]
             let workercount=5
-            let all_sent
-            let all_success
-            let all_rejected
+            let all_sent=0
+            let all_success=0
+            let all_rejected=0
             for (let i = 0; i < workercount; i++) {
                 // no web workers with deno deploy ...
                 ///const worker = new Worker(import.meta.resolve("./worker.ts")", { type: "module"});
@@ -65,7 +82,7 @@ Deno.serve( async (req: Request) =>  {
                     let fulfilled: number = 0;
                     let rejected: number = 0;
                     for (const sendx in mybatch) {
-                        requests.push(fetchResponse(mybatch[sendx]));
+                        requests.push(fetchResponse(mybatch[sendx]),saveurl,save_only);
                     }
                     await Promise.allSettled(requests).then((results) => {
                         results.forEach((result) => {
@@ -77,7 +94,6 @@ Deno.serve( async (req: Request) =>  {
                           if(result.status == 'rejected') all_rejected++;
                           if(result.status == 'fulfilled' && result.value ) {
                             rawresults.push(result.value)
-
                           }
                         });
                         console.log('Total Requests:', results.length);
