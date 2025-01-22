@@ -43,6 +43,7 @@ Deno.serve( async (req: Request) =>  {
             return new Response(JSON.stringify(json))
         } catch(e) {
             console.log("err+not+json")
+            console.log(await req.text())
         }
 
     }
