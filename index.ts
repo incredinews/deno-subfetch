@@ -18,7 +18,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     }
     console.log(returnres)
 
-    returnres["content"]=await response.text(),
+    returnres["content"]=await response.text()
     //const buf = fflate.strToU8('Hello world!');
     //// The default compression method is gzip
     //// Increasing mem may increase performance at the cost of memory
