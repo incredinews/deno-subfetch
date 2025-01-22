@@ -1,13 +1,18 @@
 import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 
-const fetchResponse = async (): Promise<any> => {
-    const response = await fetch(url, {
+const fetchResponse = async (myurl): Promise<any> => {
+    const response = await fetch(myurl, {
         method: "GET",
         //headers: {
         //    "Content-Type": "application/json",
         //},
     });
-    return response.json(); // For JSON Response
+    let myres=response.json()
+    if(!myres.url) {
+        myres.url=myurl
+      }
+    return myres;
+    //return response.json(); // For JSON Response
     //   return response.text(); // For HTML or Text Response
 }
 
@@ -45,11 +50,32 @@ Deno.serve( async (req: Request) =>  {
                 for (let i = 0; i < array.length; i += chunkSize) {
                     const chunk = array.slice(i, i + chunkSize);
                     urlchunks.push(chunk)
-                    // do whatever
                 }
                 for (const batch in urlchunks) {
-                    console.log(urlchunks[batch])
+                    let mybatch=urlchunks[batch]
+                    console.log("sendbatch")
+                    console.log(mybatch)
+                    let requests: Promise<any>[] = [];
+                    let fulfilled: number = 0;
+                    let rejected: number = 0;
+                    for (const sendx in mybatch) {
+                        requests.push(fetchResponse(mybatch[sendx]));
+                    }
+                    await Promise.allSettled(requests).then((results) => {
                     
+                        results.forEach((result) => {
+                            console.log("haveres")
+                            console.log(result)
+                          if(result.status == 'fulfilled') fulfilled++;
+                          if(result.status == 'rejected') rejected++;
+                        });
+                    
+                        console.log('Total Requests:', results.length);
+                        console.log('Total Fulfilled:', fulfilled);
+                        console.log('Total Rejected:', rejected);
+                        console.log('— — — — — — — — — — — — — — — — — — — — ')
+
+
                 }
             //console.log('SHA2-256 of '+urllist[idx], sha256(urllist[idx], "utf8", "hex"))
             let counter=0
