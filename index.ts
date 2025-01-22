@@ -3,7 +3,8 @@ import { format } from "https://deno.land/std@0.91.0/datetime/mod.ts";
 import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 
 const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
-    conole.log("thread for " + myurl)
+    console.log("thread for " + myurl)
+    console.log(dsturl)
     const response = await fetch(myurl, {
         method: "GET",
         //headers: {
