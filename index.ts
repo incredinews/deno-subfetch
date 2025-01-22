@@ -8,11 +8,13 @@ const fetchResponse = async (myurl): Promise<any> => {
         //},
     });
     //let myres=response.json()
-    let myres=response.json()
-    if(!myres.url) {
-        myres.url=myurl
-      }
-    return myres;
+    let returnres={
+        "url": myurl;
+        "content": response.text(),
+        "headers": response.headers,
+        "status:": response.status
+    }
+    return returnres;
     //return response.json(); // For JSON Response
     //   return response.text(); // For HTML or Text Response
 }
