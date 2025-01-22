@@ -9,15 +9,16 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
         //},
     });
     //let myres=response.json()
-    console.log(response)
     let returnres={
         "url": myurl,
         "status:":    response.status,
         "statusText": response.statusText,
         "redirected": response.redirected,
         "headers": await response.headers.getAll(),
-        "content": await response.text(),
     }
+    console.log(returnres)
+
+    returnres["content"]=await response.text(),
     //const buf = fflate.strToU8('Hello world!');
     //// The default compression method is gzip
     //// Increasing mem may increase performance at the cost of memory
