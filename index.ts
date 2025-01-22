@@ -14,8 +14,12 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
         "status:":    response.status,
         "statusText": response.statusText,
         "redirected": response.redirected,
-        "headers": await response.headers.getAll(),
+        "headers": {}
     }
+    response.headers.forEach((value, key) => {
+        //console.log(`${key} ==> ${value}`);
+        returnres["headers"][key]=value
+      });
     console.log(returnres)
 
     returnres["content"]=await response.text()
