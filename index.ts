@@ -93,6 +93,7 @@ Deno.serve( async (req: Request) =>  {
                 console.log("checking" +saveurl+targetpath)
                 const foldcheckres = await fetch(saveurl+targetpath, {
                     method: "PROPFIND",
+                    headers: { "Depth": 1 }
                   });
                 if(accepted_propfn.includes(foldcheckres.status)) {
                     saveurl=saveurl+targetpath
