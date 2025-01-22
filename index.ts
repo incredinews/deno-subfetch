@@ -28,6 +28,31 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     //console.log(returnres)
     returnres["content"]=await response.text()
     returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
+    if(dsturl!="dontsave") {
+    returnres.stored=false
+    console.log("saving later")
+        try {
+           const buf = fflate.strToU8(JSON.stringify(returnres));
+           // The default compression method is gzip
+           // Increasing mem may increase performance at the cost of memory
+           // The mem ranges from 0 to 12, where 4 is the default
+           const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
+           savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
+           await console.log("saving "+myurl+"to "+savename)
+           sendtourl=dsturl+savename
+           const uploadres=await fetch(sendtourl, {
+            method: 'PUT',
+            body: compressed
+          })
+          console.log("uploaded status:"+uploadres.status)
+          if(uploadres.status==200) {
+            returnres.stored=true
+          }
+        } catch(e) {
+            await console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
+        }
+    }
+    if(onlysave) { delete returnres.content }
     return returnres;
     //return response.json(); // For JSON Response
     //   return response.text(); // For HTML or Text Response
@@ -68,10 +93,10 @@ Deno.serve( async (req: Request) =>  {
                 const foldcheckres = await fetch(saveurl+targetpath, {
                     method: "MKCOL",
                   });
-                if(!accepted_propfn.includes(foldcheckres.status)) {
-                    saveurl="dontsave"
-                } else {
+                if(accepted_propfn.includes(foldcheckres.status)) {
                     saveurl=saveurl+targetpath
+                } else {
+                    saveurl="dontsave"
                 }
             } else {
                 console.log("save_disabled_foldresponse_status:"+foldresponse.status)
