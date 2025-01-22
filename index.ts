@@ -91,7 +91,7 @@ Deno.serve( async (req: Request) =>  {
             if(accepted_status.includes(foldresponse.status)) {
                 //verify folder existence
                 const foldcheckres = await fetch(saveurl+targetpath, {
-                    method: "MKCOL",
+                    method: "PROPFIND",
                   });
                 if(accepted_propfn.includes(foldcheckres.status)) {
                     saveurl=saveurl+targetpath
