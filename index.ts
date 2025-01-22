@@ -1,6 +1,6 @@
-import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 import * as fflate from 'https://cdn.skypack.dev/fflate@0.8.2?min';
 import { format } from "https://deno.land/std@0.91.0/datetime/mod.ts";
+import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 
 const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     const response = await fetch(myurl, {
@@ -17,7 +17,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
         "redirected": response.redirected,
         "headers": {}
     }
-    usehdr=["cache-control","conten-type","date","x-robots-tag","x-generated-by","x-content-type-options"]
+    let usehdr=["cache-control","conten-type","date","x-robots-tag","x-generated-by","x-content-type-options"]
     response.headers.forEach((value, key) => {
         //console.log(`${key} ==> ${value}`);
         if(usehdr.includes(key)) {
