@@ -69,7 +69,7 @@ Deno.serve( async (req: Request) =>  {
                           if(result.status == 'fulfilled') fulfilled++;
                           if(result.status == 'rejected') rejected++;
                         });
-                    
+                    }
                         console.log('Total Requests:', results.length);
                         console.log('Total Fulfilled:', fulfilled);
                         console.log('Total Rejected:', rejected);
