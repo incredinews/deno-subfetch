@@ -10,7 +10,7 @@ const fetchResponse = async (myurl): Promise<any> => {
     //let myres=response.json()
     let returnres={
         "url": myurl,
-        "content": response.text(),
+        "content": await response.text(),
         "headers": response.headers,
         "status:": response.status
     }
@@ -39,6 +39,9 @@ Deno.serve( async (req: Request) =>  {
             let rawresults=[]
             let workers=[]
             let workercount=5
+            let all_sent
+            let all_success
+            let all_rejected
             for (let i = 0; i < workercount; i++) {
                 // no web workers with deno deploy ...
                 ///const worker = new Worker(import.meta.resolve("./worker.ts")", { type: "module"});
@@ -65,12 +68,17 @@ Deno.serve( async (req: Request) =>  {
                         requests.push(fetchResponse(mybatch[sendx]));
                     }
                     await Promise.allSettled(requests).then((results) => {
-                    
                         results.forEach((result) => {
-                            console.log("haveres")
-                            console.log(result)
+//                            console.log("haveres")
+//                            console.log(result)
                           if(result.status == 'fulfilled') fulfilled++;
+                          if(result.status == 'fulfilled') all_success++;
                           if(result.status == 'rejected') rejected++;
+                          if(result.status == 'rejected') all_rejected++;
+                          if(result.status == 'fulfilled' && result.value ) {
+                            rawresults.push(result.value)
+
+                          }
                         });
                         console.log('Total Requests:', results.length);
                         console.log('Total Fulfilled:', fulfilled);
@@ -88,7 +96,7 @@ Deno.serve( async (req: Request) =>  {
             ///   counter=counter+1
             ///}
         }
-        return new Response(JSON.stringify(json))
+        return new Response(JSON.stringify(rawresults))
     }
     return new Response("Hello World") 
     }
