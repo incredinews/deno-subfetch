@@ -46,7 +46,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
             returnres.stored=true
           }
         } catch(e) {
-            console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
+            await console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
         }
     }
     if(onlysave) { delete returnres.content }
