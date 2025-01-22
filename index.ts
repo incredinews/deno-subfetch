@@ -25,31 +25,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
       });
     //console.log(returnres)
     returnres["content"]=await response.text()
-    if(dsturl!="dontsave") {
-    returnres.stored=false
-    await console.log("saving")
-        try {
-           const buf = fflate.strToU8(JSON.stringify(returnres));
-           // The default compression method is gzip
-           // Increasing mem may increase performance at the cost of memory
-           // The mem ranges from 0 to 12, where 4 is the default
-           const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
-           savename=sha256(myurl, "utf8", "hex")+"_"+format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })+".json.gz"
-           await console.log("saving "+myurl+"to "+savename)
-           sendtourl=dsturl+savename
-           const uploadres=await fetch(sendtourl, {
-            method: 'PUT',
-            body: compressed
-          })
-          console.log("uploaded status:"+uploadres.status)
-          if(uploadres.status==200) {
-            returnres.stored=true
-          }
-        } catch(e) {
-            await console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
-        }
-    }
-    if(onlysave) { delete returnres.content }
+    returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
     return returnres;
     //return response.json(); // For JSON Response
     //   return response.text(); // For HTML or Text Response
@@ -163,6 +139,7 @@ Deno.serve( async (req: Request) =>  {
             ///   counter=counter+1
             ///}
         //}
+        
         return new Response(JSON.stringify(rawresults))
     }
     return new Response("Hello World") 
