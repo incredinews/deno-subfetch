@@ -38,7 +38,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
            console.log("saving "+myurl+"to "+savename)
            sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
-            method: 'POST',
+            method: 'PUT',
             body: compressed
           })
           console.log("uploaded status:"+uploadres.status)
