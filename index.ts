@@ -40,6 +40,10 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
             method: 'POST',
             body: compressed
           })
+          console.log("uploaded status:"+uploadres.status)
+          if(uploadres.status==200) {
+            returnres.stored=true
+          }
         } catch(e) {
             console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
         }
