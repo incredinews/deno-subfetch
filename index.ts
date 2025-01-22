@@ -32,13 +32,25 @@ Deno.serve( async (req: Request) =>  {
             let workers=[]
             let workercount=5
             for (let i = 0; i < workercount; i++) {
-                const worker = new Worker(import.meta.resolve("./worker.ts")", { type: "module"});
-                
-                workers.push(worker);
-                worker.onmessage = (evt) => { 
-                  console.log("Received by parent: ", evt.data);
-                  rawresults.push(JSON.parse(evt.data)) };
-              }
+                // no web workers with deno deploy ...
+                ///const worker = new Worker(import.meta.resolve("./worker.ts")", { type: "module"});
+                ///
+                ///workers.push(worker);
+                ///worker.onmessage = (evt) => { 
+                ///  console.log("Received by parent: ", evt.data);
+                ///  rawresults.push(JSON.parse(evt.data)) };
+                ///}
+                const chunkSize = 10;
+                let urlchunks=[]
+                for (let i = 0; i < array.length; i += chunkSize) {
+                    const chunk = array.slice(i, i + chunkSize);
+                    urlchunks.push(chunk)
+                    // do whatever
+                }
+                for (const batch in urlchunks) {
+                    console.log(urlchunks[batch])
+                    
+                }
             //console.log('SHA2-256 of '+urllist[idx], sha256(urllist[idx], "utf8", "hex"))
             let counter=0
             for (const idx in urllist) {
