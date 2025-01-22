@@ -45,7 +45,7 @@ Deno.serve( async (req: Request) =>  {
                 ///  console.log("Received by parent: ", evt.data);
                 ///  rawresults.push(JSON.parse(evt.data)) };
                 ///}
-                const chunkSize = 10;
+                const chunkSize = workercount;
                 let urlchunks=[]
                 for (let i = 0; i < array.length; i += chunkSize) {
                     const chunk = array.slice(i, i + chunkSize);
