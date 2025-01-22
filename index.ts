@@ -76,7 +76,7 @@ Deno.serve( async (req: Request) =>  {
         if(json.saveurl)   { 
             saveurl=json.saveurl
             if(!saveurl.endsWith("/")) {saveurl=saveurl+"/"}
-            targetpath="feedarchive/"+format(new Date(), "yyyy-MM-dd_HH",{ utc: true })+"/"
+            let targetpath="feedarchive/"+format(new Date(), "yyyy-MM-dd_HH",{ utc: true })+"/"
 
             console.log("MAKE FOLDER "+targetpath)
             const foldresponse = await fetch(saveurl+targetpath, {
