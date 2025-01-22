@@ -86,7 +86,7 @@ Deno.serve( async (req: Request) =>  {
             const foldresponse = await fetch(saveurl+targetpath, {
                 method: "MKCOL",
               });
-            const accepted_status=[201,401,409]
+            const accepted_status=[201,401,409,405]
             const accepted_propfn=[200,207]
             if(accepted_status.includes(foldresponse.status)) {
                 //verify folder existence
@@ -96,6 +96,7 @@ Deno.serve( async (req: Request) =>  {
                 if(accepted_propfn.includes(foldcheckres.status)) {
                     saveurl=saveurl+targetpath
                 } else {
+                    console.log("save_disabled_foldcheck_status:"+foldcheckres.status)
                     saveurl="dontsave"
                 }
             } else {
