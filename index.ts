@@ -84,7 +84,7 @@ Deno.serve( async (req: Request) =>  {
                     let fulfilled: number = 0;
                     let rejected: number = 0;
                     for (const sendx in mybatch) {
-                        requests.push(fetchResponse(mybatch[sendx]),saveurl,save_only);
+                        requests.push(fetchResponse(mybatch[sendx],saveurl,save_only));
                     }
                     await Promise.allSettled(requests).then((results) => {
                         results.forEach((result) => {
