@@ -7,6 +7,7 @@ const fetchResponse = async (myurl): Promise<any> => {
         //    "Content-Type": "application/json",
         //},
     });
+    //let myres=response.json()
     let myres=response.json()
     if(!myres.url) {
         myres.url=myurl
@@ -69,11 +70,12 @@ Deno.serve( async (req: Request) =>  {
                           if(result.status == 'fulfilled') fulfilled++;
                           if(result.status == 'rejected') rejected++;
                         });
-                    })
                         console.log('Total Requests:', results.length);
                         console.log('Total Fulfilled:', fulfilled);
                         console.log('Total Rejected:', rejected);
-                        console.log('— — — — — — — — — — — — — — — — — — — — ')
+                        console.log('— — — — — — — — — — — — — — — — — — — — ')                        
+                    })
+
             }
             //console.log('SHA2-256 of '+urllist[idx], sha256(urllist[idx], "utf8", "hex"))
             let counter=0
