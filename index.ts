@@ -78,13 +78,13 @@ Deno.serve( async (req: Request) =>  {
 
             }
             //console.log('SHA2-256 of '+urllist[idx], sha256(urllist[idx], "utf8", "hex"))
-            let counter=0
-            for (const idx in urllist) {
-               let urlhash=sha256(urllist[idx], "utf8", "hex")
-               console.log("q -+->"+urllist[idx])
-               workers[counter%workercount].postMessage(urllist[idx])
-               counter=counter+1
-            }
+            ///let counter=0
+            ///for (const idx in urllist) {
+            ///   let urlhash=sha256(urllist[idx], "utf8", "hex")
+            ///   console.log("q -+->"+urllist[idx])
+            ///   workers[counter%workercount].postMessage(urllist[idx])
+            ///   counter=counter+1
+            ///}
         }
         return new Response(JSON.stringify(json))
     }
