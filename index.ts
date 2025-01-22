@@ -26,6 +26,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     //console.log(returnres)
     returnres["content"]=await response.text()
     if(dsturl!="dontsave") {
+    console.log("saving")
     returnres.stored=false
         try {
            const buf = fflate.strToU8(JSON.stringify);
