@@ -28,7 +28,6 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     returnres["content"]=await response.text()
     returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
     if(dsturl!="dontsave") {
-        returnres.stored=false
         let savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
         console.log("saving"+myurl+" AS "+savename)
         try {
@@ -43,12 +42,14 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
             method: 'PUT',
             body: compressed
           })
-          if(uploadres.status==200) {
+          const okay_status=[200,201]
+          if(okay_status.includes(uploadres.status)) {
             returnres.stored=true
           } else {
             console.log("ERROR: uploaded "+savename+" status:"+uploadres.status)
           }
         } catch(e) {
+            returnres.stored=false
             await console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
         }
     }
