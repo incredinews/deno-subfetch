@@ -3,8 +3,7 @@ import { format } from "https://deno.land/std@0.91.0/datetime/mod.ts";
 import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 
 const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
-    console.log("thread for " + myurl)
-    console.log(dsturl)
+    //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
         method: "GET",
         //headers: {
@@ -29,15 +28,15 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     returnres["content"]=await response.text()
     returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
     if(dsturl!="dontsave") {
-    returnres.stored=false
-    console.log("saving later")
+        returnres.stored=false
+        let savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
+        console.log("saving"+myurl+" AS "+savename)
         try {
            const buf = fflate.strToU8(JSON.stringify(returnres));
            // The default compression method is gzip
            // Increasing mem may increase performance at the cost of memory
            // The mem ranges from 0 to 12, where 4 is the default
            const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
-           savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
            await console.log("saving "+myurl+"to "+savename)
            sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
