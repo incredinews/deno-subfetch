@@ -61,6 +61,14 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
 
 Deno.serve( async (req: Request) =>  { 
     if (req.method === "POST") {
+        let mytoken= Deno.env.get("API_KEY")
+        let returnobj={}
+        if(!mytoken) {
+            returnobj.status="ERR"
+            returnobj.msg="NO_API_KEY"
+            return new Response(JSON.stringify(returnobj))
+        }
+        if(req.headers.get("API-KEY")==)
         //console.log(await req.body)
         const inbody=await req.text()
         let json={}
@@ -171,8 +179,10 @@ Deno.serve( async (req: Request) =>  {
             ///   counter=counter+1
             ///}
         //}
-
-        return new Response(JSON.stringify(rawresults))
+        returnobj.status="OK"
+        returnobj.msg="DONE"
+        returnobj.results=rawresults
+        return new Response(JSON.stringify(returnobj))
     }
     return new Response("Hello World") 
     }
