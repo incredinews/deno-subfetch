@@ -1,5 +1,3 @@
-import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
-
 const fetchResponse = async (): Promise<any> => {
     const response = await fetch(url, {
         method: "GET",
@@ -13,6 +11,9 @@ const fetchResponse = async (): Promise<any> => {
 self.onmessage = async (e) => {
   const { myurl } = e.data;
   const myres=await fetchResponse(myurl)
+  if(!myres.url) {
+    myres.url=myurl
+  }
   const mystr=JSON.stringify(myres)
   console.log(mystr);
   self.postMessage({ data: mystr });

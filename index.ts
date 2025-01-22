@@ -17,14 +17,27 @@ Deno.serve( async (req: Request) =>  {
         try {
             //const json = await req.body.json()
             const json=JSON.parse( await req.text())
-            console.log(json);
+            //console.log(json);
             //console.log(await githubResponse())
             if(json.urls) {
                 let urllist=json.urls
+                let urlhash=sha256(urllist[idx], "utf8", "hex")
+                let rawresults=[]
+                let workers=[]
+                let workercount=5
+                for (let i = 0; i < workercount; i++) {
+                    const worker = new Worker("./worker.ts", {
+                      type: "module",
+                    });
+                    workers.push(worker);
+                   worker.onmessage = (evt) => {console.log("Received by parent: ", evt.data);JSON.parse(evt.data)};
+                  }
+                //console.log('SHA2-256 of '+urllist[idx], sha256(urllist[idx], "utf8", "hex"))
+                let counter=0
                 for (const idx in urllist) {
-                   console.log(urllist[idx])
-                   //console.log('SHA2-256 of '+urllist[idx], sha256(urllist[idx], "utf8", "hex"))
-
+                   console.log("q -+->"+urllist[idx])
+                   workers[counter%workercount].postMessage(urllist[idx])
+                   counter=counter+1
                 }
             }
             return new Response(JSON.stringify(json))
