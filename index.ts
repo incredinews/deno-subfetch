@@ -38,14 +38,15 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
            // The mem ranges from 0 to 12, where 4 is the default
            const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
            await console.log("saving "+myurl+"to "+savename)
-           sendtourl=dsturl+savename
+           let sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
             method: 'PUT',
             body: compressed
           })
-          console.log("uploaded status:"+uploadres.status)
           if(uploadres.status==200) {
             returnres.stored=true
+          } else {
+            console.log("ERROR: uploaded "+savename+" status:"+uploadres.status)
           }
         } catch(e) {
             await console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
