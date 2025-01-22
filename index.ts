@@ -26,8 +26,8 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     //console.log(returnres)
     returnres["content"]=await response.text()
     if(dsturl!="dontsave") {
-    console.log("saving")
     returnres.stored=false
+    console.log("saving")
         try {
            const buf = fflate.strToU8(JSON.stringify);
            // The default compression method is gzip
