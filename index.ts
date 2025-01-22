@@ -1,5 +1,6 @@
 import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 import * as fflate from 'https://cdn.skypack.dev/fflate@0.8.2?min';
+import { format } from "https://deno.land/std@0.91.0/datetime/mod.ts";
 
 const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     const response = await fetch(myurl, {
@@ -25,12 +26,20 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     //console.log(returnres)
     returnres["content"]=await response.text()
     if(saveurl!="dontsave") {
+    returnres.stored=false
         try {
-           const buf = fflate.strToU8('Hello world!');
+           const buf = fflate.strToU8(JSON.stringify);
            // The default compression method is gzip
            // Increasing mem may increase performance at the cost of memory
            // The mem ranges from 0 to 12, where 4 is the default
            const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
+           savename=sha256(urllist[idx], "utf8", "hex")+"_"+format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })+".json.gz"
+           console.log("saving "+myurl+"to "+savename)
+           sendtourl=dsturl+savename
+           const uploadres=await fetch(sendtourl, {
+            method: 'POST',
+            body: compressed
+          })
         } catch(e) {
             console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
         }
@@ -66,10 +75,24 @@ Deno.serve( async (req: Request) =>  {
             targetpath="feedarchive/"+format(new Date(), "yyyy-MM-dd_HH",{ utc: true })+"/"
 
             console.log("MAKE FOLDER "+targetpath)
-//            const foldresponse = await fetch(saveurl+, {
-//                method: "POST",
-//              });
-              
+            const foldresponse = await fetch(saveurl+targetpath, {
+                method: "MKCOL",
+              });
+            const accepted_status=[201,401,409]
+            const accepted_propfn=[200,207]
+            if(accepted_status.includes(foldresponse.status)) {
+                //verify folder existence
+                const foldcheckres = await fetch(saveurl+targetpath, {
+                    method: "MKCOL",
+                  });
+                if(accepted_propfn.includes(foldcheckres.status)) {
+                    saveurl="dontsave"
+                } else {
+                    saveurl=saveurl+targetpath
+                }
+            } else {
+                saveurl="dontsave"
+            }
         }
         if(json.urls) {
             let urllist=json.urls
