@@ -93,8 +93,11 @@ Deno.serve( async (req: Request) =>  {
 //                            console.log(result)
                           if(result.status == 'fulfilled') fulfilled++;
                           if(result.status == 'fulfilled') all_success++;
-                          if(result.status == 'rejected') rejected++;
-                          if(result.status == 'rejected') all_rejected++;
+                          if(result.status == 'rejected') {
+                            rejected++;
+                            all_rejected++;
+                            console.log(result)
+                          } 
                           if(result.status == 'fulfilled' && result.value ) {
                             rawresults.push(result.value)
                           }
