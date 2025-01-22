@@ -62,7 +62,7 @@ Deno.serve( async (req: Request) =>  {
             let all_sent=0
             let all_success=0
             let all_rejected=0
-            for (let i = 0; i < workercount; i++) {
+            //for (let i = 0; i < workercount; i++) {
                 // no web workers with deno deploy ...
                 ///const worker = new Worker(import.meta.resolve("./worker.ts")", { type: "module"});
                 ///
@@ -117,7 +117,7 @@ Deno.serve( async (req: Request) =>  {
             ///   workers[counter%workercount].postMessage(urllist[idx])
             ///   counter=counter+1
             ///}
-        }
+        //}
         return new Response(JSON.stringify(rawresults))
     }
     return new Response("Hello World") 
