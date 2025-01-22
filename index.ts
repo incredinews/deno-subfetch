@@ -36,7 +36,9 @@ Deno.serve( async (req: Request) =>  {
                   type: "module",
                 });
                 workers.push(worker);
-               worker.onmessage = (evt) => {console.log("Received by parent: ", evt.data);JSON.parse(evt.data)};
+                worker.onmessage = (evt) => { 
+                  console.log("Received by parent: ", evt.data);
+                  rawresults.push(JSON.parse(evt.data)) };
               }
             //console.log('SHA2-256 of '+urllist[idx], sha256(urllist[idx], "utf8", "hex"))
             let counter=0
