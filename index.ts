@@ -29,7 +29,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     returnres.stored=false
     await console.log("saving")
         try {
-           const buf = fflate.strToU8(JSON.stringify);
+           const buf = fflate.strToU8(JSON.stringify(returnres));
            // The default compression method is gzip
            // Increasing mem may increase performance at the cost of memory
            // The mem ranges from 0 to 12, where 4 is the default
