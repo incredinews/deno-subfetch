@@ -66,11 +66,14 @@ Deno.serve( async (req: Request) =>  {
         if(!mytoken) {
             returnobj.status="ERR"
             returnobj.msg="NO_API_KEY"
+            returnobj.msg_detail="set API_KEY environment variable to proceed"
             return new Response(JSON.stringify(returnobj))
         }
         if(req.headers.get("API-KEY")!=mytoken) {
             returnobj.status="ERR"
             returnobj.msg="UNAUTHORIZED"
+            returnobj.msg_detail="send the HTTP-header API-KEY matching your API_KEY environment variable to proceed"
+
             return new Response(JSON.stringify(returnobj))  
         }
         //console.log(await req.body)
