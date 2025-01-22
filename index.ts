@@ -52,12 +52,8 @@ Deno.serve( async (req: Request) =>  {
         // do we return only status or full content
         let save_only=false
         let saveurl="dontsave"
-        if(json.saveurl) {
-           saveurl=json.saveurl
-           if(json.save_only) {
-            save_only=true
-           }
-        }
+        if(json.save_only) { save_only=true }
+        if(json.saveurl)   { saveurl=json.saveurl }
         if(json.urls) {
             let urllist=json.urls
             let rawresults=[]
