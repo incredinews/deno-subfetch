@@ -68,7 +68,11 @@ Deno.serve( async (req: Request) =>  {
             returnobj.msg="NO_API_KEY"
             return new Response(JSON.stringify(returnobj))
         }
-        if(req.headers.get("API-KEY")==)
+        if(req.headers.get("API-KEY")!=mytoken) {
+            returnobj.status="ERR"
+            returnobj.msg="UNAUTHORIZED"
+            return new Response(JSON.stringify(returnobj))  
+        }
         //console.log(await req.body)
         const inbody=await req.text()
         let json={}
