@@ -13,7 +13,7 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
     //let myres=response.json()
     let returnres={
         "url": myurl,
-        "status:":    response.status,
+        "status":    response.status,
         "statusText": response.statusText,
         "redirected": response.redirected,
         "headers": {}
