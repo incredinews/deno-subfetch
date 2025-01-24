@@ -1,8 +1,9 @@
 import * as fflate from 'https://cdn.skypack.dev/fflate@0.8.2?min';
 import { format } from "https://deno.land/std@0.91.0/datetime/mod.ts";
 import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
+import { parseFeed } from "jsr:@mikaelporttila/rss@*";
 
-const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
+const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
         method: "GET",
@@ -53,6 +54,15 @@ const fetchResponse = async (myurl,dsturl,onlysave): Promise<any> => {
             await console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
         }
     }
+    if(parse_feed) {
+        try {
+            returnres.feed = await parseFeed(returnres.content);
+
+        } catch (error) {
+            
+        }
+
+    }
     if(onlysave) { delete returnres.content }
     return returnres;
     //return response.json(); // For JSON Response
@@ -93,6 +103,8 @@ Deno.serve( async (req: Request) =>  {
         let save_only=false
         let saveurl="dontsave"
         if(json.save_only) { save_only=true }
+        let parse_feed=false
+        if(json.parse_feed) { parse_feed=true }
         if(json.saveurl)   { 
             saveurl=json.saveurl
             if(!saveurl.endsWith("/")) {saveurl=saveurl+"/"}
@@ -153,7 +165,7 @@ Deno.serve( async (req: Request) =>  {
                     let fulfilled: number = 0;
                     let rejected: number = 0;
                     for (const sendx in mybatch) {
-                        requests.push(fetchResponse(mybatch[sendx],saveurl,save_only));
+                        requests.push(fetchResponse(mybatch[sendx],saveurl,save_only,parse_feed));
                     }
                     await Promise.allSettled(requests).then((results) => {
                         results.forEach((result) => {
