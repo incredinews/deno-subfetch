@@ -1,6 +1,6 @@
-import * as fflate from 'https://cdn.skypack.dev/fflate@0.8.2?min';
-import { format } from "https://deno.land/std@0.91.0/datetime/mod.ts";
-import { sha256 } from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
+import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
+import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
+import { sha256 }    from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 import { parseFeed } from "jsr:@mikaelporttila/rss@*";
 
 const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
@@ -46,6 +46,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
           const okay_status=[200,201]
           if(okay_status.includes(uploadres.status)) {
             returnres.stored=true
+            returnres.storepath=sendtourl.split("@")[1]
           } else {
             console.log("ERROR: uploaded "+savename+" status:"+uploadres.status)
           }
