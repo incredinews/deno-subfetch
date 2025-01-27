@@ -204,7 +204,11 @@ Deno.serve( async (req: Request) =>  {
         returnobj.results=rawresults
         return new Response(JSON.stringify(returnobj))
     }
-    return new Response("Hello World") 
+    return new Response("Hello_from_fetch POST", {
+        headers: { "content-type": "text/html" },
+      });
     }
-
+return new Response("Hello_from_fetch GET", {
+    headers: { "content-type": "text/html" },
+  });
 });
