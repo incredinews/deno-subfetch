@@ -212,3 +212,6 @@ export default async function handler(req: Request,context) {
     }
 }
 
+export const config: Config = {
+    path: "/fetch",
+  };

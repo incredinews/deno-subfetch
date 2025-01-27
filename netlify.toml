@@ -2,6 +2,6 @@
 command = "deno install --allow-read --allow-net netlify/edge-functions/fetch.tsx"
 publish = "public"
 
-[[edge_functions]]
-function = "fetch"
-path = "/fetch"
+#[[edge_functions]]
+#function = "fetch"
+#path = "/fetch"
