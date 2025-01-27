@@ -208,10 +208,16 @@ export default async function handler(req: Request,context) {
         //return new Response(JSON.stringify(returnobj))
         return context.json(returnobj)
     }
-    return new Response("Hello_from_fetch") 
+    return new Response("Hello_from_fetch POST", {
+        headers: { "content-type": "text/html" },
+      });
     }
+return new Response("Hello_from_fetch GET", {
+    headers: { "content-type": "text/html" },
+  });
 }
 
 export const config: Config = {
     path: "/fetch",
   };
+  
