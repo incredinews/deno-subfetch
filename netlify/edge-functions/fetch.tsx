@@ -205,7 +205,8 @@ export default async function handler(req: Request,context) {
         returnobj.status="OK"
         returnobj.msg="DONE"
         returnobj.results=rawresults
-        return new Response(JSON.stringify(returnobj))
+        //return new Response(JSON.stringify(returnobj))
+        return context.json(returnobj)
     }
     return new Response("Hello_from_fetch") 
     }
