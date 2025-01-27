@@ -4,7 +4,7 @@ import { sha256 }    from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 //import { parseFeed } from "https://deno.land/x/rss/mod.ts";
 //import { parseFeed } from "jsr:@mikaelporttila/rss@*";
 //import { parseFeed } from "https://jsr.io/@mikaelporttila/rss/1.1.1/mod.ts";
-import { parseFeed } from "./deno_rss_1.1.1";
+import { parseFeed } from "./deno_rss_1.1.1/mod.ts";
 
 const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
     //console.log("thread for " + myurl)
