@@ -73,7 +73,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
     //   return response.text(); // For HTML or Text Response
 }
 
-Deno.serve( async (req: Request) =>  { 
+export default async function handler(req: Request,context) {
     if (req.method === "POST") {
         let mytoken= Deno.env.get("API_KEY")
         let returnobj={}
@@ -209,5 +209,5 @@ Deno.serve( async (req: Request) =>  {
     }
     return new Response("Hello_from_fetch") 
     }
+}
 
-});
