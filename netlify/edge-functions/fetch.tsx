@@ -118,40 +118,37 @@ export default async function handler(req: Request,context) {
             if(!saveurl.endsWith("/")) {saveurl=saveurl+"/"}
             let targetpath="feedarchive/"+format(new Date(), "yyyy-MM-dd_HH",{ utc: true })+"/"
 
-            console.log("MAKE FOLDER "+targetpath)
-            const foldresponse = await fetch(saveurl+targetpath, {
-                method: "MKCOL",
-              });
             const accepted_status=[201,401,409,405]
             const accepted_propfn=[200,207]
-            if(accepted_status.includes(foldresponse.status)) {
-                //verify folder existence
-                console.log("checking" +targetpath)
-                const foldcheckres = await fetch(saveurl+targetpath, {
-                    method: "PROPFIND",
-                    headers: { "Depth": 1 }
+            //verify folder existence
+            console.log("checking " +targetpath)
+            const foldcheckres = await fetch(saveurl+targetpath, {
+                method: "PROPFIND",
+                headers: { "Depth": 1 }
+              });
+            if(accepted_propfn.includes(foldcheckres.status)) {
+                console.log("save_enabled_foldcheck_status:"+foldcheckres.status)
+                saveurl=saveurl+targetpath
+            } else {
+                console.log("MAKE FOLDER "+targetpath + " (foldcheck_status:"+foldcheckres.status+") ")
+                const foldresponse = await fetch(saveurl+targetpath, {
+                    method: "MKCOL",
                   });
-                if(accepted_propfn.includes(foldcheckres.status)) {
-                    console.log("save_enabled_foldcheck_status:"+foldcheckres.status)
+                
+                if(accepted_status.includes(foldresponse.status)) {
+                    console.log("save_enabled_foldcreate_status:"+foldresponse.status)
                     saveurl=saveurl+targetpath
                 } else {
-                    console.log("save_disabled_foldcheck_status:"+foldcheckres.status)
+                    console.log("save_disabled_foldcreate_status:"+foldresponse.status)
                     saveurl="dontsave"
                     if(save_only) {
-                        return new Response("ERROR_from_fetch POST : PROPFIND_FAILED_"+foldresponse.status, {
+                        return new Response("ERROR_from_fetch POST : MKCOL_FAILED_"+foldresponse.status, {
                             headers: { "content-type": "text/html" },
                           });
                     }
                 }
-            } else {
-                console.log("save_disabled_foldresponse_status:"+foldresponse.status)
-                saveurl="dontsave"
-                if(save_only) {
-                    return new Response("ERROR_from_fetch POST : MKCOL_FAILED_"+foldresponse.status, {
-                        headers: { "content-type": "text/html" },
-                      });
-                }
             }
+
         }
         if(json.urls) {
             let urllist=json.urls
