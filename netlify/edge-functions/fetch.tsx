@@ -121,7 +121,7 @@ export default async function handler(req: Request,context) {
             const accepted_status=[201,401,409,405]
             const accepted_propfn=[200,207]
             //verify folder existence
-            console.log("checking " +targetpath)
+            console.log("checking_fold: " +targetpath)
             const foldcheckres = await fetch(saveurl+targetpath, {
                 method: "PROPFIND",
                 headers: { "Depth": 1 }
