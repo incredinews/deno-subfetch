@@ -1,0 +1,21 @@
+{
+    "$schema": "https://raw.githubusercontent.com/skymethod/denoflare/v0.6.0/common/config.schema.json",
+    "scripts": {
+        "main": {
+            "path": "fetch.ts",
+            "bindings": {
+                "API_KEY": {
+                    "value": "NOT_SET"
+                }
+            },
+            "localPort": 3030,
+            "localIsolation": "isolate"
+        }
+    },
+    "profiles": {
+        "account1": {
+            "accountId": "NOT_SET",
+            "apiToken": "NOT_SET"
+        }
+    }
+}

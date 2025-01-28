@@ -1,14 +1,13 @@
-import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
-import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
-import { sha256 }    from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
-import { parseFeed } from "jsr:@mikaelporttila/rss@*";
+//import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
+//import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
+import { fflate, format , sha256}    from './deps.ts';
+//import { parseFeed } from "https://deno.land/x/rss/mod.ts";
+//import { parseFeed } from "jsr:@mikaelporttila/rss@*";
+//import { parseFeed } from "https://jsr.io/@mikaelporttila/rss/1.1.1/mod.ts";
+import { parseFeed } from "../netlify/edge-functions/deno_rss_1.1.1/mod.ts";
 
-
-
-
-
-
-
+// via denoflare environment bindings: https://denoflare.dev/cli/configuration
+type Env = { API_KEY?: string, cloudflareUrl?: string, supabaseUrl?: string, deployUrl?: string, lambdaUrl?: string };
 
 
 const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
@@ -67,21 +66,24 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
     if(parse_feed) {
         try {
             returnres.feed = await parseFeed(returnres.content);
-
+	
         } catch (error) {
             
         }
-
+	
     }
     if(onlysave) { delete returnres.content }
-    return returnres;
     //return response.json(); // For JSON Response
     //   return response.text(); // For HTML or Text Response
+    return returnres;
 }
 
-Deno.serve( async (req: Request) =>  { 
+export default {
+
+    // standard workers fetch handler
+    async fetch(req: Request, env: Env): Promise<Response> {
     if (req.method === "POST") {
-        let mytoken= Deno.env.get("API_KEY")
+        let mytoken= env.API_KEY
         let returnobj={}
         if(!mytoken||mytoken=="NOT_SET") {
             returnobj.status="ERR"
@@ -170,7 +172,7 @@ Deno.serve( async (req: Request) =>  {
                 }
                 for (const batch in urlchunks) {
                     let mybatch=urlchunks[batch]
-                    console.log("sendbatch: "+mybatch.length )
+                    console.log("sendbatch:"+mybatch.length)
                     //console.log(mybatch)
                     let requests: Promise<any>[] = [];
                     let fulfilled: number = 0;
@@ -213,6 +215,7 @@ Deno.serve( async (req: Request) =>  {
         returnobj.msg="DONE"
         returnobj.results=rawresults
         return new Response(JSON.stringify(returnobj))
+        //eturn context.json(returnobj)
     }
     return new Response("Hello_from_fetch POST", {
         headers: { "content-type": "text/html" },
@@ -221,4 +224,5 @@ Deno.serve( async (req: Request) =>  {
 return new Response("Hello_from_fetch GET", {
     headers: { "content-type": "text/html" },
   });
-});
+    }
+}

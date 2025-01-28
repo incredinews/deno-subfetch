@@ -6,6 +6,9 @@ import { sha256 }    from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 //import { parseFeed } from "https://jsr.io/@mikaelporttila/rss/1.1.1/mod.ts";
 import { parseFeed } from "./deno_rss_1.1.1/mod.ts";
 
+
+
+
 const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
@@ -33,7 +36,8 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
     returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
     if(dsturl!="dontsave") {
         let savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
-        console.log("saving"+myurl+" AS "+savename)
+        //console.log("saving "+myurl+" AS "+savename)
+        console.log("saving to: "+savename)
         try {
            const buf = fflate.strToU8(JSON.stringify(returnres));
            // The default compression method is gzip
@@ -77,7 +81,7 @@ export default async function handler(req: Request,context) {
     if (req.method === "POST") {
         let mytoken= Deno.env.get("API_KEY")
         let returnobj={}
-        if(!mytoken) {
+        if(!mytoken||mytoken=="NOT_SET") {
             returnobj.status="ERR"
             returnobj.msg="NO_API_KEY"
             returnobj.msg_detail="set API_KEY environment variable to proceed"
@@ -122,12 +126,13 @@ export default async function handler(req: Request,context) {
             const accepted_propfn=[200,207]
             if(accepted_status.includes(foldresponse.status)) {
                 //verify folder existence
-                console.log("checking" +saveurl+targetpath)
+                console.log("checking" +targetpath)
                 const foldcheckres = await fetch(saveurl+targetpath, {
                     method: "PROPFIND",
                     headers: { "Depth": 1 }
                   });
                 if(accepted_propfn.includes(foldcheckres.status)) {
+                    console.log("save_enabled_foldcheck_status:"+foldcheckres.status)
                     saveurl=saveurl+targetpath
                 } else {
                     console.log("save_disabled_foldcheck_status:"+foldcheckres.status)
@@ -163,8 +168,8 @@ export default async function handler(req: Request,context) {
                 }
                 for (const batch in urlchunks) {
                     let mybatch=urlchunks[batch]
-                    console.log("sendbatch")
-                    console.log(mybatch)
+                    console.log("sendbatch:"+mybatch.length)
+                    //console.log(mybatch)
                     let requests: Promise<any>[] = [];
                     let fulfilled: number = 0;
                     let rejected: number = 0;
