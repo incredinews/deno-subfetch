@@ -137,10 +137,20 @@ export default async function handler(req: Request,context) {
                 } else {
                     console.log("save_disabled_foldcheck_status:"+foldcheckres.status)
                     saveurl="dontsave"
+                    if(save_only) {
+                        return new Response("ERROR_from_fetch POST : PROPFIND_FAILED_"+foldresponse.status, {
+                            headers: { "content-type": "text/html" },
+                          });
+                    }
                 }
             } else {
                 console.log("save_disabled_foldresponse_status:"+foldresponse.status)
                 saveurl="dontsave"
+                if(save_only) {
+                    return new Response("ERROR_from_fetch POST : MKCOL_FAILED_"+foldresponse.status, {
+                        headers: { "content-type": "text/html" },
+                      });
+                }
             }
         }
         if(json.urls) {
