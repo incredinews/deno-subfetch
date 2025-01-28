@@ -5,12 +5,6 @@ import { parseFeed } from "jsr:@mikaelporttila/rss@*";
 
 
 
-
-
-
-
-
-
 const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {

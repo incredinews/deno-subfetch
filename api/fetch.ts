@@ -1,13 +1,12 @@
-import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
-import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
-import { sha256 }    from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
-import { parseFeed } from "jsr:@mikaelporttila/rss@*";
+#!/usr/bin/env  DENO_DIR=/tmp --location http://example.com/fetch  deno run -A
 
-
-
-
-
-
+//import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
+//import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
+import { fflate, format , sha256 }    from './deps.ts';
+//import { parseFeed } from "https://deno.land/x/rss/mod.ts";
+//import { parseFeed } from "jsr:@mikaelporttila/rss@*";
+//import { parseFeed } from "https://jsr.io/@mikaelporttila/rss/1.1.1/mod.ts";
+import { parseFeed } from "../netlify/edge-functions/deno_rss_1.1.1/mod.ts";
 
 
 
@@ -78,8 +77,8 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
     //return response.json(); // For JSON Response
     //   return response.text(); // For HTML or Text Response
 }
-
-Deno.serve( async (req: Request) =>  { 
+const port = parseInt(Deno.env.get('PORT') ?? '8000')
+Deno.serve({ hostname: '0.0.0.0', port: port }, async (req: Request) =>  { 
     if (req.method === "POST") {
         let mytoken= Deno.env.get("API_KEY")
         let returnobj={}
@@ -228,5 +227,3 @@ return new Response("Hello_from_fetch GET", {
     headers: { "content-type": "text/html" },
   });
 });
-
-export default { fetch }

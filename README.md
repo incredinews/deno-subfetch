@@ -24,7 +24,12 @@
  
  ```
 
-## deno serve
+## deno serve ( untested )
+```
+deno run --port $RANDOM -A index.ts
+```
+
+## deno serve ( untested )
 ```
 deno serve --port $RANDOM -A index_as_module.ts
 ```
