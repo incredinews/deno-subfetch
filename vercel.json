@@ -1,0 +1,6 @@
+{
+	"functions": {
+		"api/**/*.[jt]s": { "runtime": "vercel-deno@3.1.0" }
+	},
+    "buildCommand": "bash build-vercel.sh"
+}
