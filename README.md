@@ -23,3 +23,8 @@
  denoflare push main --bundle 'backend=module'
  
  ```
+
+## deno serve
+```
+deno serve --port $RANDOM -A index_as_module.ts
+```
