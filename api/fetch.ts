@@ -1,4 +1,4 @@
-#!/usr/bin/env  DENO_DIR=/tmp --location http://example.com/fetch  deno run -A
+#!/usr/bin/env  DENO_DIR=/tmp --version 2.1.7 --location http://example.com/fetch  deno run -A
 
 import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
 import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
