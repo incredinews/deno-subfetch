@@ -1,5 +1,5 @@
 FROM alpine
-RUN apk add bash ca-certificates curl deno grep sed && mkdir /app
+RUN apk add bash ca-certificates curl grep sed && mkdir /app && (curl -fsSL https://deno.land/install.sh | bash)
 WORKDIR /app
 ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;deno run --allow-all index.ts"]
 CMD ["/bin/bash"]
