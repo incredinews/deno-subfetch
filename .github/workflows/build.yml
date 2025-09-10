@@ -1,0 +1,106 @@
+name: Build and Push Docker Image to GHCR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - Dockerfile
+      - .github/workflows/build.yml
+      - index.ts
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Log in to external Container Registry
+#        uses: docker/login-action@v3
+#        with:
+#          registry: c8n.io
+#          username: ${{ secrets.REGISTRY_USER }}
+#          password: ${{ secrets.REGISTRY_PASS }}
+#      - name: Build and push Docker image ext
+#        uses: docker/build-push-action@v6
+#        with:
+#          cache-from: |
+#            type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
+#          cache-to: |
+#            type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
+#          context: .
+#          file: ./Dockerfile
+#          push: true
+#          tags: c8n.io/${{ secrets.REGISTRY_PROJECT }}/otlp-alpine
+#          labels: ${{ steps.meta.outputs.labels }}
+#          platforms: linux/amd64,linux/arm64
+#          platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+### gh
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
+          cache-to: |
+            type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+#          platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+#################
+      - name: Sleep for few seconds
+        run: sleep 10
+        shell: bash
+      - uses: actions/delete-package-versions@v4
+        name: delete non-build containers
+        with: 
+          package-name: "${{ github.event.repository.name }}"
+          package-type: 'container'
+          min-versions-to-keep: 4
+          delete-only-untagged-versions: 'true'
+          ignore-versions: '.*(buildcache|baseimage|builder)(|.*)'
+          #token: ${{ secrets.PACKAGE_TOKEN }}
+          token: ${{ github.token }}
+  del_runs:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+          keep_minimum_runs: 1
