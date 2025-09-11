@@ -38,7 +38,9 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
     if(dsturl!="dontsave") {
         let savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
         //console.log("saving "+myurl+" AS "+savename)
-        console.log("saving to: "+savename)
+       if (Deno.env.get("DEBUG") == "true") {
+                console.log("saving to: "+savename)
+        }
         try {
            const buf = fflate.strToU8(JSON.stringify(returnres));
            // The default compression method is gzip
@@ -131,7 +133,10 @@ export default {
                 headers: { "Depth": 1 }
               });
             if(accepted_propfn.includes(foldcheckres.status)) {
-                console.log("save_enabled_foldcheck_status:"+foldcheckres.status)
+                if (Deno.env.get("DEBUG") == "true") {
+                   console.log("save_enabled_foldcheck_status:"+foldcheckres.status)
+                }
+
                 saveurl=saveurl+targetpath
             } else {
                 console.log("MAKE FOLDER "+targetpath + " (foldcheck_status:"+foldcheckres.status+") ")
@@ -140,10 +145,14 @@ export default {
                   });
                 
                 if(accepted_status.includes(foldresponse.status)) {
-                    console.log("save_enabled_foldcreate_status:"+foldresponse.status)
+                    if (Deno.env.get("DEBUG") == "true") {
+                       console.log("save_enabled_foldcreate_status:"+foldresponse.status)
+                    }
                     saveurl=saveurl+targetpath
                 } else {
-                    console.log("save_disabled_foldcreate_status:"+foldresponse.status)
+                    if (Deno.env.get("DEBUG") == "true") {
+                        console.log("save_disabled_foldcreate_status:"+foldresponse.status)
+                    }
                     saveurl="dontsave"
                     if(save_only) {
                         return new Response("ERROR_from_fetch POST : MKCOL_FAILED_"+foldresponse.status, {
@@ -201,10 +210,7 @@ export default {
                             rawresults.push(result.value)
                           }
                         });
-                        console.log('Total Requests:', results.length);
-                        console.log('Total Fulfilled:', fulfilled);
-                        console.log('Total Rejected:', rejected);
-                        console.log('— — — — — — — — — — — — — — — — — — — — ')                        
+                        console.log('++++ Requests:  Fulfilled:', fulfilled ,' / ', results.length + ' |  Rejected: ', rejected, ' ++++');                   
                     })
 
             }
