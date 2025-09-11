@@ -124,14 +124,16 @@ Deno.serve({ hostname: '0.0.0.0', port: port }, async (req: Request) =>  {
             const accepted_status=[201,401,409,405]
             const accepted_propfn=[200,207]
             //verify folder existence
-            console.log("checking_fold: " +targetpath)
+            let logstr=targetpath+" | "
             const foldcheckres = await fetch(saveurl+targetpath, {
                 method: "PROPFIND",
                 headers: { "Depth": 1 }
               });
             if(accepted_propfn.includes(foldcheckres.status)) {
                 if (Deno.env.get("DEBUG") == "true") {
-                   console.log("save_enabled_foldcheck_status:"+foldcheckres.status)
+                    console.log("save_enabled_foldcheck_status:"+logstr+" "+foldcheckres.status)
+                } else {
+                    logstr=logstr+foldcheckres.status
                 }
                 saveurl=saveurl+targetpath
             } else {
