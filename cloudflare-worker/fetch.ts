@@ -191,7 +191,9 @@ export default {
                 }
                 for (const batch in urlchunks) {
                     let mybatch=urlchunks[batch]
-                    console.log("sendbatch:"+mybatch.length)
+                    if (Deno.env.get("DEBUG") == "true") { 
+                        console.log("sendbatch: "+mybatch.length ) 
+                    }
                     //console.log(mybatch)
                     let requests: Promise<any>[] = [];
                     let fulfilled: number = 0;

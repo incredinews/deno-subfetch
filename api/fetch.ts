@@ -188,7 +188,9 @@ Deno.serve({ hostname: '0.0.0.0', port: port }, async (req: Request) =>  {
                 }
                 for (const batch in urlchunks) {
                     let mybatch=urlchunks[batch]
-                    console.log("sendbatch: "+mybatch.length )
+                    if (Deno.env.get("DEBUG") == "true") { 
+                        console.log("sendbatch: "+mybatch.length ) 
+                    }
                     //console.log(mybatch)
                     let requests: Promise<any>[] = [];
                     let fulfilled: number = 0;
