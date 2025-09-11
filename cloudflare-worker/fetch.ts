@@ -47,7 +47,9 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
            // Increasing mem may increase performance at the cost of memory
            // The mem ranges from 0 to 12, where 4 is the default
            const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
-           await console.log("saving "+myurl+"to "+savename)
+           if (Deno.env.get("DEBUG") == "true") {
+               await console.log("saving "+myurl+" to "+savename)
+           }
            let sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
             method: 'PUT',
