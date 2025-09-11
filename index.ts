@@ -49,11 +49,12 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
                 console.log("saving to: "+savename)
         }
         try {
-           const buf = fflate.strToU8(JSON.stringify(returnres));
-           // The default compression method is gzip
-           // Increasing mem may increase performance at the cost of memory
-           // The mem ranges from 0 to 12, where 4 is the default
-           const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
+           //const buf = fflate.strToU8(JSON.stringify(returnres));
+           //// The default compression method is gzip
+           //// Increasing mem may increase performance at the cost of memory
+           //// The mem ranges from 0 to 12, where 4 is the default
+           //const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
+           const compressed = fflate.compressSync(fflate.strToU8(JSON.stringify(returnres)), { level: 6, mem: 8 });
            if (Deno.env.get("DEBUG") == "true") {
                await console.log("saving "+myurl+" to "+savename)
            }
