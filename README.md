@@ -33,3 +33,12 @@ deno run --port $RANDOM -A index.ts
 ```
 deno serve --port $RANDOM -A index_as_module.ts
 ```
+
+example with logging fallback for debian openbsd etc. where otlp does not properly work , use the attached script and set it up like e.g. in the following part
+```
+#/bin/bash 
+echo 'export OTEL_EXPORTER_OTLP_ENDPOINT=https://your-logger/ ;export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=https://your-logger/;export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://your-logger/;export OTEL_DENO=true;export OTEL_DENO_CONSOLE=replace;export OTEL_SERVICE_NAME=fetch;export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic acbdef1234567890";export API_KEY=youtAPIKey111;' >  ~/domains/your-domain.lan/exports.tmp
+( screen -ls |grep    ftch |grep Dead -q && screen -wipe &>/dev/null ) 
+screen -ls |grep -q ftch               || screen -dmS ftch bash -c 'cd ~/domains/your-domain.lan/ ;test -e exports.tmp && echo exports found && source exports.tmp && rm exports.tmp & export API_KEY=yourAPIKey;export PORT=$(/usr/local/hoster-tool/bin/hoster-tool port list|grep -e deno -e dno |cut -d" " -f1|head -n1);deno run --allow-import --allow-net   --allow-env index.ts 2>&1 | bash otl_snd.sh'
+
+```
