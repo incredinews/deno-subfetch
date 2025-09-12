@@ -9,7 +9,7 @@ COPY index.ts /
 RUN bash -c "cd /app && deno cache --allow-import index.ts" && deno compile --allow-all --no-check --output /usr/bin/subfetch index.ts
 
 FROM debian:bookworm
-RUN apt-get update && apt-get -y install --no-install-recommends ca-certificates curl bash unzip && (find /var/cache/apt/archives /var/lib/apt/lists -type f -delete ) && mkdir /app
+RUN apt-get update && apt-get -y install --no-install-recommends ca-certificates curl bash unzip && (find /var/cache/apt/archives /var/lib/apt/lists -type f -delete || true ) && mkdir /app
 WORKDIR /app
 COPY --from=builder /usr/bin/subfetch /usr/bin
 #ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;deno run --allow-all index.ts"]
