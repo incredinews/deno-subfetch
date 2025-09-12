@@ -228,9 +228,9 @@ Deno.serve({ hostname: '0.0.0.0', port: port }, async (req: Request) =>  {
         //}
         returnobj.status="OK"
         returnobj.msg="DONE"
-        returnobj.results=rawresults
+        returnobj.results=Array.from(rawresults)
         return new Response(JSON.stringify(returnobj))
-    }
+        }
     return new Response("Hello_from_fetch POST", {
         headers: { "content-type": "text/html" },
       });
