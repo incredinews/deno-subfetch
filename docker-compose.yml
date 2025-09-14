@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  wireguard:
+    image: c8n.io/deno/deno-subfetch
+    container_name: subfetch
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+#    volumes:
+#      - /usr/share/appdata/foobar/config:/config
+#      - /usr/src:/usr/src # location of kernel headers
+#      - /lib/modules:/lib/modules
+    ports:
+      - 8000:8000/tcp
+#    sysctls:
+#      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
