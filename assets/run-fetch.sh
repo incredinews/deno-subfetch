@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-/usr/bin/gobetween & 
+/usr/bin/gobetween -c /etc/gobtw.toml &
 
 date +%s > /tmp/drain_127.0.0.1_10002
 
