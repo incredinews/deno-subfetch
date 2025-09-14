@@ -5,7 +5,7 @@
 
 date +%s > /tmp/drain_127.0.0.1_10002
 
-while (true);
+while (true); do 
 myport=10001
 
 #for m in 1 2 3 4 5;do 
