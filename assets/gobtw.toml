@@ -1,5 +1,5 @@
 [servers.fetch]
-bind = "0.0.0.0:3000"
+bind = "0.0.0.0:8000"
 protocol = "tcp" 
 #balance = "roundrobin"
 
