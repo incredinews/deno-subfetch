@@ -237,6 +237,9 @@ Deno.serve({ hostname: "::", port: port }, async (req: Request) =>  {
         returnobj.status="OK"
         returnobj.msg="DONE"
         returnobj.results=rawresults
+        try {
+            gc()
+        } catch(e) { console.log("gc failed w:"+e)}
         return new Response(JSON.stringify(returnobj))
     }
     return new Response("Hello_from_fetch POST", {

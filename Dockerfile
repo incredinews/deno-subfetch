@@ -6,7 +6,7 @@ FROM debian:bookworm AS builder
 RUN apt-get update && apt-get -y install --no-install-recommends ca-certificates curl bash unzip && mkdir /app && (curl -fsSL https://deno.land/install.sh | bash && ln -s /root/.deno/bin/deno /usr/bin/deno )
 #WORKDIR /app
 COPY index.ts /
-RUN bash -c "cd /app && deno cache --allow-import index.ts" && deno compile --allow-all --no-check --output /usr/bin/subfetch index.ts
+RUN bash -c "cd /app && deno cache --allow-import index.ts" && deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch index.ts
 
 FROM debian:bookworm
 RUN apt-get update && apt-get -y install --no-install-recommends ca-certificates curl bash unzip && (find /var/cache/apt/archives /var/lib/apt/lists -type f -delete || true ) && mkdir /app
@@ -18,5 +18,5 @@ ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;/
 CMD ["/bin/bash"]
 EXPOSE 8000
 #COPY index.ts /app/
-#RUN bash -c "cd /app && deno cache --allow-import index.ts" && deno compile --allow-all --no-check --output /usr/bin/subfetch index.ts
+#RUN bash -c "cd /app && deno cache --allow-import index.ts" && deno compile --allow-all --v8-flags="--expose-gc" --no-check --output /usr/bin/subfetch index.ts
 ## remove no check after code has been re-written
