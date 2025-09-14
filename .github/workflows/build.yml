@@ -9,6 +9,7 @@ on:
       - .github/workflows/build.yml
       - index.ts
       - odtl_snd.sh
+      - assets/**
 
 jobs:
   build-and-push:
