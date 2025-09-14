@@ -15,7 +15,7 @@ myport=$(cat /tmp/myport.fetch)
 ## test -e /tmp/drain_127.0.0.1_$myport || myport=10002
 [[ "$DEBUG"  == "true" ]] && echo "SWITCH_PORT: $myport"
 export PORT=$myport
-rm     /tmp/drain_127.0.0.1_$myport ;
+test -e /tmp/drain_127.0.0.1_$myport  && rm /tmp/drain_127.0.0.1_$myport ;
 timeout 333 /usr/bin/subfetch &
 sleep 270 ; 
 touch  /tmp/drain_127.0.0.1_$myport
