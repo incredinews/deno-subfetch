@@ -1,0 +1,43 @@
+[servers.fetch]
+bind = "0.0.0.0:3000"
+protocol = "tcp" 
+#balance = "roundrobin"
+
+max_connections = 50000
+client_idle_timeout = "10m"
+backend_idle_timeout = "10m"
+backend_connection_timeout = "3s"
+ 
+[servers.fetch.discovery]
+    kind = "static"
+    static_list = [
+      "127.0.0.1:10001 weight=1 priority=1",
+      "127.0.0.1:10002 weight=1 priority=1"
+    ]
+
+[servers.fetch.healthcheck]
+    fails = 1                      
+    passes = 1          
+interval = "20s"  
+timeout = "23s"  
+#    kind = "ping"
+#    ping_timeout_duration = "500ms"
+    kind = "exec"
+    exec_command = "/etc/healthcheck-fetch.sh"
+    exec_expected_positive_output = "1"           # (required) expected output of command in case of success
+    exec_expected_negative_output = "0"           # (required) expected output of command in case of failure
+    
+[api]
+enabled = true  # true | false
+bind = "127.0.0.1:60666"  # bind host:port
+
+  # uncomment to enable 
+  [api.basic_auth]   # (optional) Enable HTTP Basic Auth
+  login = "srvlbadmin"    # HTTP Auth Login
+  password = "ArandomPASSshouldBEinserted"  # HTTP Auth Password
+
+#  # uncomment to enable
+#  [api.tls]                        # (optional) Enable HTTPS
+#  cert_path = "/etc/ssl/certs/ssl-cert-snakeoil.pem"  # Path to certificate
+##  key_path = "/etc/ssl/private/ssl-cert-snakeoil.key"    # Path to key
+#  key_path = "./ssl-cert-snakeoil.key"    # Path to key
