@@ -16,6 +16,7 @@ COPY --from=builder /usr/bin/subfetch /usr/bin/
 COPY --from=copylb  /gobetween        /usr/bin/
 
 COPY ./assets/gobtw.toml ./assets/run-fetch.sh ./assets/healthcheck-fetch.sh /etc/
+RUN chmod +x /etc/healthcheck-fetch.sh 
 #ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;deno run --allow-all index.ts"]
 #ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;/usr/bin/subfetch"]
 ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;bash /etc/run-fetch.sh"]
