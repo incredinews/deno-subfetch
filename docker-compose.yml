@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  wireguard:
+  subfetch:
     image: c8n.io/deno/deno-subfetch
     container_name: subfetch
     cap_add:
