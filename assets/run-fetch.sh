@@ -19,7 +19,7 @@ rm     /tmp/drain_127.0.0.1_$myport ;
 timeout 333 /usr/bin/subfetch &
 sleep 270 ; 
 touch  /tmp/drain_127.0.0.1_$myport
-sleep 60
+sleep 30
 [[ "$myport" == "10001" ]] && (echo 10002 > /tmp/myport.fetch  )
 [[ "$myport" == "10002" ]] && (echo 10001 > /tmp/myport.fetch  )
 
