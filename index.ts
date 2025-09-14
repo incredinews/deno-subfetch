@@ -216,9 +216,9 @@ Deno.serve({ hostname: "::", port: port }, async (req: Request) =>  {
                             rejected++;
                             all_rejected++;
                             try {
-                            console.log("status: "+result.status+" |"+result.reason.split("\n")[0])
+                            console.log("status: "+result.split("\n")[0])
                             } catch (e) {
-                                console.log(reason)
+                                console.log(result)
                             }
 
                           } 
