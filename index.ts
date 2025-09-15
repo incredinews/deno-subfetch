@@ -216,9 +216,10 @@ Deno.serve({ hostname: "::", port: port }, async (req: Request) =>  {
                             rejected++;
                             all_rejected++;
                             try {
-                            console.log("status: "+result.stack.split("\n", 2).join(" ++ "))
+                            console.log("status: "+result.reason.split("\n", 2).join(" ++ "))
                             } catch (e) {
-                                console.log(result)
+                                //console.log(JSON.stringify(result))
+                                console.log("REJECT: ",result.reason)
                             }
 
                           } 
