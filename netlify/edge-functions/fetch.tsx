@@ -47,20 +47,20 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
            //// The mem ranges from 0 to 12, where 4 is the default
            //const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
            const compressed = fflate.compressSync(fflate.strToU8(JSON.stringify(returnres)), { level: 6, mem: 8 });
-          if (Deno.env.get("DEBUG") == "true") {
-             await console.log("saving "+myurl+" to "+savename)
-           } 
+           if (Deno.env.get("DEBUG") == "true") {
+               await console.log("saving "+myurl+" to "+savename)
+           }
            let sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
             method: 'PUT',
             body: compressed
           })
-          const okay_status=[200,201]
+          const okay_status=[200,201,204]
           if(okay_status.includes(uploadres.status)) {
             returnres.stored=true
             returnres.storepath=sendtourl.split("@")[1]
           } else {
-            console.log("ERROR: uploaded "+savename+" status: "+uploadres.status)
+            console.log("ERROR: uploaded "+savename+" status:"+uploadres.status)
           }
         } catch(e) {
             returnres.stored=false
@@ -143,6 +143,7 @@ export default async function handler(req: Request,context) {
                 const foldresponse = await fetch(saveurl+targetpath, {
                     method: "MKCOL",
                   });
+                
                 if(accepted_status.includes(foldresponse.status)) {
                     if (Deno.env.get("DEBUG") == "true") {
                        console.log("save_enabled_foldcreate_status:"+foldresponse.status)
@@ -160,7 +161,6 @@ export default async function handler(req: Request,context) {
                     }
                 }
             }
-
         }
         if(json.urls) {
             let urllist=json.urls
@@ -206,13 +206,18 @@ export default async function handler(req: Request,context) {
                           if(result.status == 'rejected') {
                             rejected++;
                             all_rejected++;
-                            console.log(result)
+                            try {
+                            console.log("status: "+result.stack.split("\n", 2).join(" ++ "))
+                            } catch (e) {
+                                console.log(result)
+                            }
+
                           } 
                           if(result.status == 'fulfilled' && result.value ) {
                             rawresults.push(result.value)
                           }
                         });
-                        console.log('++++ Requests:  Fulfilled:', fulfilled ,' / ', results.length + ' |  Rejected: ', rejected, ' ++++');
+                        console.log('++++ Requests:  Fulfilled:', fulfilled ,' / ', results.length + ' |  Rejected: ', rejected, ' ++++');                       
                     })
 
             }
@@ -228,8 +233,10 @@ export default async function handler(req: Request,context) {
         returnobj.status="OK"
         returnobj.msg="DONE"
         returnobj.results=rawresults
+        //try {
+        //    gc()
+        //} catch(e) { console.log("gc failed w:"+e)}
         //return new Response(JSON.stringify(returnobj))
-        return context.json(returnobj)
     }
     return new Response("Hello_from_fetch POST", {
         headers: { "content-type": "text/html" },

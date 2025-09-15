@@ -56,7 +56,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
             method: 'PUT',
             body: compressed
           })
-          const okay_status=[200,201]
+          const okay_status=[200,201,204]
           if(okay_status.includes(uploadres.status)) {
             returnres.stored=true
             returnres.storepath=sendtourl.split("@")[1]
@@ -65,22 +65,22 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
           }
         } catch(e) {
             returnres.stored=false
-            await console.log("ERROR SAVING "+myurl + " TO ... POST  : " + e )
+            await console.log("ERROR SAVING "+ myurl + " TO ... POST  : " + e )
         }
     }
     if(parse_feed) {
         try {
             returnres.feed = await parseFeed(returnres.content);
-	
+
         } catch (error) {
             
         }
-	
+
     }
     if(onlysave) { delete returnres.content }
+    return returnres;
     //return response.json(); // For JSON Response
     //   return response.text(); // For HTML or Text Response
-    return returnres;
 }
 
 export default {
@@ -210,13 +210,18 @@ export default {
                           if(result.status == 'rejected') {
                             rejected++;
                             all_rejected++;
-                            console.log(result)
+                            try {
+                            console.log("status: "+result.stack.split("\n", 2).join(" ++ "))
+                            } catch (e) {
+                                console.log(result)
+                            }
+
                           } 
                           if(result.status == 'fulfilled' && result.value ) {
                             rawresults.push(result.value)
                           }
                         });
-                        console.log('++++ Requests:  Fulfilled:', fulfilled ,' / ', results.length + ' |  Rejected: ', rejected, ' ++++');                   
+                        console.log('++++ Requests:  Fulfilled:', fulfilled ,' / ', results.length + ' |  Rejected: ', rejected, ' ++++');                       
                     })
 
             }
@@ -232,8 +237,10 @@ export default {
         returnobj.status="OK"
         returnobj.msg="DONE"
         returnobj.results=rawresults
+        //try {
+        //    gc()
+        //} catch(e) { console.log("gc failed w:"+e)}
         return new Response(JSON.stringify(returnobj))
-        //eturn context.json(returnobj)
     }
     return new Response("Hello_from_fetch POST", {
         headers: { "content-type": "text/html" },

@@ -56,7 +56,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
             method: 'PUT',
             body: compressed
           })
-          const okay_status=[200,201]
+          const okay_status=[200,201,204]
           if(okay_status.includes(uploadres.status)) {
             returnres.stored=true
             returnres.storepath=sendtourl.split("@")[1]
@@ -207,13 +207,18 @@ Deno.serve({ hostname: '0.0.0.0', port: port }, async (req: Request) =>  {
                           if(result.status == 'rejected') {
                             rejected++;
                             all_rejected++;
-                            console.log(result)
+                            try {
+                            console.log("status: "+result.stack.split("\n", 2).join(" ++ "))
+                            } catch (e) {
+                                console.log(result)
+                            }
+
                           } 
                           if(result.status == 'fulfilled' && result.value ) {
                             rawresults.push(result.value)
                           }
                         });
-                        console.log('++++ Requests:  Fulfilled:', fulfilled ,' / ', results.length + ' |  Rejected: ', rejected, ' ++++');                      
+                        console.log('++++ Requests:  Fulfilled:', fulfilled ,' / ', results.length + ' |  Rejected: ', rejected, ' ++++');                       
                     })
 
             }
@@ -228,7 +233,10 @@ Deno.serve({ hostname: '0.0.0.0', port: port }, async (req: Request) =>  {
         //}
         returnobj.status="OK"
         returnobj.msg="DONE"
-        returnobj.results=Array.from(rawresults)
+        returnobj.results=rawresults
+        //try {
+        //    gc()
+        //} catch(e) { console.log("gc failed w:"+e)}
         return new Response(JSON.stringify(returnobj))
         }
     return new Response("Hello_from_fetch POST", {
