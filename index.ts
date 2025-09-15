@@ -63,7 +63,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
             method: 'PUT',
             body: compressed
           })
-          const okay_status=[200,201]
+          const okay_status=[200,201,204]
           if(okay_status.includes(uploadres.status)) {
             returnres.stored=true
             returnres.storepath=sendtourl.split("@")[1]
@@ -216,7 +216,7 @@ Deno.serve({ hostname: "::", port: port }, async (req: Request) =>  {
                             rejected++;
                             all_rejected++;
                             try {
-                            console.log("status: "+result.split("at ")[0])
+                            console.log("status: "+result.stack.split("\n", 2).join(" ++ "))
                             } catch (e) {
                                 console.log(result)
                             }
