@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+test -e /etc/connector.conf &&  ( /connector --config /etc/connector.conf  2>&1 |grep -v -e decryption -e key -e keepalive -e ndshake -e TUN -e Interface -e encryption ) &
 ( /usr/bin/gobetween -c /etc/gobtw.toml 2>&1 | grep -v "ending to scheduler" ) &
 
 #date +%s > /tmp/drain_127.0.0.1_10002
