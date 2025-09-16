@@ -1,4 +1,3 @@
-otl_snd.sh 
 while read line;do 
 
 escline=$(echo "$line"|jq -R -s '.')
