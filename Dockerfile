@@ -14,6 +14,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends ca-certificates
 WORKDIR /app
 COPY --from=builder /usr/bin/subfetch /usr/bin/
 COPY --from=copylb  /gobetween        /usr/bin/
+COPY --from=builder /connector        /
 
 COPY ./assets/gobtw.toml ./assets/run-fetch.sh ./assets/healthcheck-fetch.sh /etc/
 RUN chmod +x /etc/healthcheck-fetch.sh 
