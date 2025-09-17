@@ -5,10 +5,10 @@ test -e /setup.sh && source /setup.sh
 function outlog() {
    cat
 }
-[[ "OTEL_DENO" == "true" ]] && function outlog() {
+[[ "${OTEL_DENO}" == "true" ]] && function outlog() {
    /bin/bash /etc/otl_snd.sh
 }
-[[ "OTEL_DENO" == "true" ]] && {
+[[ "${OTEL_DENO}" == "true" ]] && {
     echo "RECOMPILING..."
    cd /app ; deno cache --allow-import index.ts && deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch index.ts
 }
