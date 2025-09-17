@@ -252,10 +252,10 @@ Deno.serve({ hostname: "::", port: port }, async (req: Request) =>  {
         headers: { "content-type": "text/html" },
       });
     }
-  if (reqPath === "/favicon.ico") {
+  if (Request.pathname === "/favicon.ico") {
     return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
   }
-  if (reqPath === "/robots.txt") {
+  if (Request.pathname === "/robots.txt") {
     return new Response("User-agent: *"+"\n"+"Disallow: /", {
     headers: { "content-type": "text/plain" },
   });
