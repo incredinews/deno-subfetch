@@ -1,5 +1,14 @@
 #!/bin/bash
+
+
 test -e /setup.sh && source /setup.sh
+function outlog() {
+   cat
+}
+[[ "OTEL_DENO" == "true" ]] && function outlog() {
+   /bin/bash otl_snd.sh
+}
+
 test -e /etc/connector.conf &&  ( echo "start conn..."; /connector --config /etc/connector.conf  2>&1 |grep -v -e decryp -e key -e keepalive -e ndshake -e TUN -e Interface -e encryp ) &
 ( /usr/bin/gobetween -c /etc/gobtw.toml 2>&1 | grep -v "ending to scheduler" ) &
 
@@ -16,7 +25,7 @@ myport=$(cat /tmp/myport.fetch)
 [[ "$DEBUG"  == "true" ]] && echo "SWITCH_PORT: $myport"
 export PORT=$myport
 test -e /tmp/drain_127.0.0.1_$myport  && rm /tmp/drain_127.0.0.1_$myport ;
-timeout 420 /usr/bin/subfetch &
+timeout 420 /usr/bin/subfetch | outlog &
 sleep 333 ; 
 ( sleep 10 ; touch  /tmp/drain_127.0.0.1_$myport ) &
 
