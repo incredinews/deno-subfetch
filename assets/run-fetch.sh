@@ -11,7 +11,7 @@ function outlog() {
 [[ "${OTEL_DENO}" == "true" ]] && {
     echo "RECOMPILING..."
    cd /app ; deno cache --allow-import index.ts && deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch index.ts 
-   rm -rf /root/.deno /app
+   #rm -rf /root/.deno /app
 }
 test -e /etc/connector.conf &&  ( echo "start conn..."; /connector --config /etc/connector.conf  2>&1 |grep -v -e decryp -e key -e keepalive -e ndshake -e TUN -e Interface -e encryp ) &
 ( /usr/bin/gobetween -c /etc/gobtw.toml 2>&1 | grep -v "ending to scheduler" ) &
