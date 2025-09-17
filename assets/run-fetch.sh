@@ -14,9 +14,11 @@ function outlog() {
    cd /app ; deno cache --allow-import index.ts && deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch index.ts 2>&1|grep -v "Download"
    du -m -s /root/.deno /root/.cache/deno /app
    rm -rf /root/.deno /root/.cache/deno
-
+   echo "done compiling"
 }
-test -e /etc/connector.conf &&  ( echo "start conn..."; /connector --config /etc/connector.conf  2>&1 |grep -v -e decryp -e key -e keepalive -e ndshake -e TUN -e Interface -e encryp ) &
+
+test -e /etc/connector.conf &&  ( echo "start conn..."; while (true);do sleep 2;/connector --config /etc/connector.conf  2>&1 |grep -v -e decryp -e key -e keepalive -e ndshake -e TUN -e Interface -e encryp ;done) &
+
 ( /usr/bin/gobetween -c /etc/gobtw.toml 2>&1 | grep -v "ending to scheduler" ) &
 
 #date +%s > /tmp/drain_127.0.0.1_10002
