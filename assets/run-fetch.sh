@@ -6,7 +6,7 @@ function outlog() {
    cat
 }
 [[ "OTEL_DENO" == "true" ]] && function outlog() {
-   /bin/bash otl_snd.sh
+   /bin/bash /etc/otl_snd.sh
 }
 
 test -e /etc/connector.conf &&  ( echo "start conn..."; /connector --config /etc/connector.conf  2>&1 |grep -v -e decryp -e key -e keepalive -e ndshake -e TUN -e Interface -e encryp ) &
