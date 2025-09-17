@@ -7,7 +7,7 @@ FROM debian:bookworm AS builder
 RUN apt-get update && apt-get -y install --no-install-recommends ca-certificates curl bash unzip  && mkdir /app && (curl -fsSL https://deno.land/install.sh | bash && ln -s /root/.deno/bin/deno /usr/bin/deno ) &&  bash -c 'uname -m;cd /;ARCH=amd64;uname -m |grep -e armv7 && ARCH=armv7;uname -m |grep -e arm64 -e aarch64 && ARCH=arm64 ; echo load $ARCH; ( curl -kLs  https://github.com/whyvl/wireproxy/releases/download/v1.0.9/wireproxy_linux_$ARCH.tar.gz|tar xvz wireproxy && mv wireproxy connector )  & (curl -kL https://github.com/fatedier/frp/releases/download/v0.64.0/frp_0.64.0_linux_$ARCH.tar.gz|tar xvz frp_0.64.0_linux_$ARCH/frpc && mv frp_0.64.0_linux_$ARCH/frpc /  ) &  wait;rm README.md &>/dev/null ' ||true
 #WORKDIR /app
 COPY index.ts /app/
-RUN bash -c "cd /app ; deno cache --allow-import /app/index.ts" && export OTEL_DENO=true && deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch /app/index.ts
+RUN bash -c "cd /app ; deno cache --allow-import /app/index.ts" &&  deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch /app/index.ts
 
 FROM debian:bookworm
 RUN apt-get update && apt-get -y install --no-install-recommends ca-certificates curl bash unzip procps  && (curl -fsSL https://deno.land/install.sh | bash && ln -s /root/.deno/bin/deno /usr/bin/deno ) && (find /var/cache/apt/archives /var/lib/apt/lists -type f -delete || true ) && mkdir /app
