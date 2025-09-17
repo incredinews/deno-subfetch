@@ -21,7 +21,7 @@ COPY --from=builder /frpc             /
 
 
 COPY ./assets/otl_snd.sh ./assets/gobtw.toml ./assets/run-fetch.sh ./assets/healthcheck-fetch.sh /etc/
-RUN chmod +x /etc/healthcheck-fetch.sh /connector
+RUN chmod +x /etc/healthcheck-fetch.sh /connector && bash -c " cd /app ; deno cache --allow-import index.ts"
 #ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;deno run --allow-all index.ts"]
 #ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;/usr/bin/subfetch"]
 ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;bash /etc/run-fetch.sh"]
