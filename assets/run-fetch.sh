@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 test -e /setup.sh && source /setup.sh
 function outlog() {
    cat

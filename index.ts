@@ -41,12 +41,23 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
       });
     //console.log(returnres)
     returnres["content"]=await response.text()
-    returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
+    //returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
+    const date = new Date()
+    const year = date.getUTCFullYear()  
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0')  
+    const day = date.getUTCDate().toString().padStart(2, '0')
+    const hours = date.getUTCHours().toString().padStart(2, '0')  
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0')  
+    //const seconds = date.getUTCSeconds().toString().padStart(2, '0')  
+    //const milliseconds = date.getUTCMilliseconds().toString().padStart(3, '0')
+    //const utc = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
+    returnres["time_fetched"]=`${year}-${month}-${day}_${hours}.${minutes}`
     if(dsturl!="dontsave") {
         let savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
         //console.log("saving "+myurl+" AS "+savename)
        if (Deno.env.get("DEBUG") == "true") {
                 console.log("saving to: "+savename)
+                
         }
         try {
            //const buf = fflate.strToU8(JSON.stringify(returnres));
