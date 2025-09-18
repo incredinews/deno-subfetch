@@ -24,8 +24,8 @@ COPY ./assets/otl_snd.sh ./assets/gobtw.toml ./assets/run-fetch.sh ./assets/heal
 RUN chmod +x /etc/healthcheck-fetch.sh /connector && bash -c " cd /app ; deno cache --allow-import index.ts"
 #ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;deno run --allow-all index.ts"]
 #ENTRYPOINT ["/bin/bash","-c","test -e  /setup.sh && source /setup.sh ;cd /app ;/usr/bin/subfetch"]
-#ENTRYPOINT ["/bin/bash","-c","bash /run.sh"]
-ENTRYPOINT ["/bin/bash","/run.sh"]
+ENTRYPOINT ["/bin/bash","-c","cd /app ;bash /run.sh"]
+
 CMD ["/bin/bash"]
 EXPOSE 8000
 #COPY index.ts /app/
