@@ -9,10 +9,12 @@ function outlog() {
 }
 [[ "${OTEL_DENO}" == "true" ]] && {
     echo "RECOMPILING..."
-
+   cp /usr/bin/subfetch /usr/bin/subfetch.prev
    cd /app ; deno cache --allow-import index.ts && deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch index.ts 2>&1|grep -v "Download"
    du -m -s /root/.deno /root/.cache/deno /app
    rm -rf /root/.deno /root/.cache/deno
+   test -e /usr/bin/subfetch || echo "/usr/bin/subfetch missing after compile"
+   test -e /usr/bin/subfetch || cp /usr/bin/subfetch.prev /usr/bin/subfetch
    echo "done compiling"
 }
 
