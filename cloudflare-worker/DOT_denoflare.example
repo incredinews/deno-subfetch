@@ -5,7 +5,10 @@
             "path": "fetch.ts",
             "bindings": {
                 "API_KEY": {
-                    "value": "NOT_SET"
+                    "value": "yourAPIkey"
+                },
+                "DEBUG": {
+                    "value": "false"
                 }
             },
             "localPort": 3030,
@@ -14,8 +17,8 @@
     },
     "profiles": {
         "account1": {
-            "accountId": "NOT_SET",
-            "apiToken": "NOT_SET"
+            "accountId": "INSERT_ACCOUNT_ID",
+            "apiToken": "INSERT_ACCOUNT_TOKEN"
         }
     }
 }

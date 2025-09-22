@@ -17,10 +17,17 @@ import { parseFeed } from "jsr:@mikaelporttila/rss@*";
 //  unit: "ms",
 //});
 
+AbortSignal.timeout ??= function timeout(ms) {
+  const ctrl = new AbortController()
+  setTimeout(() => ctrl.abort(), ms)
+  return ctrl.signal
+}
+
 const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
         method: "GET",
+        signal: AbortSignal.timeout(55000),
         //headers: {
         //    "Content-Type": "application/json",
         //},
@@ -71,6 +78,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
            }
            let sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
+            signal: AbortSignal.timeout(55000),
             method: 'PUT',
             body: compressed
           })
@@ -149,6 +157,7 @@ Deno.serve({ hostname: "::", port: port }, async (req: Request) =>  {
             let logstr=targetpath+" | "
             const foldcheckres = await fetch(saveurl+targetpath, {
                 method: "PROPFIND",
+                signal: AbortSignal.timeout(25000),
                 headers: { "Depth": 1 }
               });
             if(accepted_propfn.includes(foldcheckres.status)) {
@@ -161,6 +170,7 @@ Deno.serve({ hostname: "::", port: port }, async (req: Request) =>  {
             } else {
                 console.log("MAKE FOLDER "+targetpath + " (foldcheck_status:"+foldcheckres.status+") ")
                 const foldresponse = await fetch(saveurl+targetpath, {
+                    signal: AbortSignal.timeout(25000),
                     method: "MKCOL",
                   });
                 
@@ -232,7 +242,6 @@ Deno.serve({ hostname: "::", port: port }, async (req: Request) =>  {
                                 //console.log(JSON.stringify(result))
                                 console.log("REJECT: "+typeof(result.reason)+" | ",result.reason)
                             }
-
                           } 
                           if(result.status == 'fulfilled' && result.value ) {
                             rawresults.push(result.value)

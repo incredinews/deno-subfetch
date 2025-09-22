@@ -7,7 +7,7 @@ import { fflate, format , sha256}    from './deps.ts';
 import { parseFeed } from "../netlify/edge-functions/deno_rss_1.1.1/mod.ts";
 
 // via denoflare environment bindings: https://denoflare.dev/cli/configuration
-type Env = { API_KEY?: string, cloudflareUrl?: string, supabaseUrl?: string, deployUrl?: string, lambdaUrl?: string };
+type Env = { API_KEY?: string, DEBUG?: string, cloudflareUrl?: string, supabaseUrl?: string, deployUrl?: string, lambdaUrl?: string };
 
 
 const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
@@ -38,7 +38,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
     if(dsturl!="dontsave") {
         let savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
         //console.log("saving "+myurl+" AS "+savename)
-       if (Deno.env.get("DEBUG") == "true") {
+       if (env.DEBUG == "true") {
                 console.log("saving to: "+savename)
         }
         try {
@@ -48,7 +48,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
            //// The mem ranges from 0 to 12, where 4 is the default
            //const compressed = fflate.compressSync(buf, { level: 6, mem: 8 });
            const compressed = fflate.compressSync(fflate.strToU8(JSON.stringify(returnres)), { level: 6, mem: 8 });
-           if (Deno.env.get("DEBUG") == "true") {
+           if (env.DEBUG == "true") {
                await console.log("saving "+myurl+" to "+savename)
            }
            let sendtourl=dsturl+savename
@@ -136,7 +136,7 @@ export default {
                 headers: { "Depth": 1 }
               });
             if(accepted_propfn.includes(foldcheckres.status)) {
-                if (Deno.env.get("DEBUG") == "true") {
+                if (env.DEBUG == "true") {
                     console.log("save_enabled_foldcheck_status:"+logstr+" "+foldcheckres.status)
                 } else {
                     logstr=logstr+foldcheckres.status
@@ -149,12 +149,12 @@ export default {
                   });
                 
                 if(accepted_status.includes(foldresponse.status)) {
-                    if (Deno.env.get("DEBUG") == "true") {
+                    if (env.DEBUG == "true") {
                        console.log("save_enabled_foldcreate_status:"+foldresponse.status)
                     }
                     saveurl=saveurl+targetpath
                 } else {
-                    if (Deno.env.get("DEBUG") == "true") {
+                    if (env.DEBUG == "true") {
                         console.log("save_disabled_foldcreate_status:"+foldresponse.status)
                     }
                     saveurl="dontsave"
@@ -191,7 +191,7 @@ export default {
                 }
                 for (const batch in urlchunks) {
                     let mybatch=urlchunks[batch]
-                    if (Deno.env.get("DEBUG") == "true") { 
+                    if (env.DEBUG == "true") { 
                         console.log("sendbatch: "+mybatch.length ) 
                     }
                     //console.log(mybatch)
