@@ -14,10 +14,10 @@ function outlog() {
    mv     /root/.cache/deno   /tmp/cache/deno 
    ln -s  /tmp/cache/deno     /root/.cache/deno
    mkdir /tmp/deno
-   export DENO_DIR=/tmp/deno
-   cd /app ; deno cache --allow-import index.ts && deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch index.ts 2>&1|grep -v "Download"
+   #export DENO_DIR=/tmp/deno
+   cd /app ;deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch index.ts 2>&1|grep -v "Download"
    du -m -s /root/.deno /root/.cache/deno /app /tmp/deno
-   rm -rf /root/.deno /root/.cache/deno /tmp/cache/deno /tmp/deno
+   rm -rf /root/.deno /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
    test -e /usr/bin/subfetch || echo "/usr/bin/subfetch missing after compile"
    test -e /usr/bin/subfetch || cp /usr/bin/subfetch.prev /usr/bin/subfetch
    echo "done compiling"
