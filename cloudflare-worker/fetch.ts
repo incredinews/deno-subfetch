@@ -10,7 +10,7 @@ import { parseFeed } from "../netlify/edge-functions/deno_rss_1.1.1/mod.ts";
 type Env = { API_KEY?: string, DEBUG?: string, cloudflareUrl?: string, supabaseUrl?: string, deployUrl?: string, lambdaUrl?: string };
 
 
-const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
+const fetchResponse = async ( myurl: string, dsturl: string, onlysave: boolean, parse_feed: boolean, env: Env ): Promise<any> => {
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
         method: "GET",
@@ -199,7 +199,7 @@ export default {
                     let fulfilled: number = 0;
                     let rejected: number = 0;
                     for (const sendx in mybatch) {
-                        requests.push(fetchResponse(mybatch[sendx],saveurl,save_only,parse_feed));
+                        requests.push(fetchResponse(mybatch[sendx],saveurl,save_only,parse_feed,env));
                     }
                     await Promise.allSettled(requests).then((results) => {
                         results.forEach((result) => {
