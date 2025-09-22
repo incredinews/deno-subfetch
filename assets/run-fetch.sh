@@ -9,7 +9,7 @@ function outlog() {
 }
 [[ "${OTEL_DENO}" == "true" ]] && {
     echo "RECOMPILING..."
-   cp /usr/bin/subfetch /usr/bin/subfetch.prev
+   #cp /usr/bin/subfetch /usr/bin/subfetch.prev
    mkdir /tmp/cache
    mv     /root/.cache/deno   /tmp/cache/deno 
    ln -s  /tmp/cache/deno     /root/.cache/deno
@@ -20,7 +20,7 @@ function outlog() {
    #rm -rf /root/.deno /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
    rm -rf /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
    test -e /usr/bin/subfetch || echo "/usr/bin/subfetch missing after compile"
-   test -e /usr/bin/subfetch || cp /usr/bin/subfetch.prev /usr/bin/subfetch
+   test -e /usr/bin/subfetch || cp /usr/bin/subfetch.orig /usr/bin/subfetch
    echo "done compiling"
 }
 
