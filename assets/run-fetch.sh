@@ -20,7 +20,7 @@ function outlog() {
    #rm -rf /root/.deno /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
    rm -rf /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
    test -e /usr/bin/subfetch || echo "/usr/bin/subfetch missing after compile"
-   test -e /usr/bin/subfetch || cp /usr/bin/subfetch.orig /usr/bin/subfetch
+   test -e /usr/bin/subfetch || ln -s /usr/bin/subfetch.orig /usr/bin/subfetch
    echo "done compiling"
 }
 
