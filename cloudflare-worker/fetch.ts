@@ -1,30 +1,16 @@
-import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
-import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
-import { sha256 }    from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
-import { parseFeed } from "jsr:@mikaelporttila/rss@*";
-//import { metrics, trace } from "npm:@opentelemetry/api@1";
+//import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
+//import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
+import { fflate, format , sha256}    from './deps.ts';
+//import { parseFeed } from "https://deno.land/x/rss/mod.ts";
+//import { parseFeed } from "jsr:@mikaelporttila/rss@*";
+//import { parseFeed } from "https://jsr.io/@mikaelporttila/rss/1.1.1/mod.ts";
+import { parseFeed } from "../netlify/edge-functions/deno_rss_1.1.1/mod.ts";
 
-//// Create a tracer and meter for our application
-//const defaultname = "deno-subfetch"
-//const tracer = trace.getTracer(Deno.env.get('PORT') ?? defaultname , "1.0.0");
-//const meter = metrics.getMeter(Deno.env.get('PORT') ?? defaultname , "1.0.0");
-//// Create  metrics
-//const requestCounter = meter.createCounter("http_requests_total", {
-//  description: "Total number of HTTP requests",
-//});
-//const requestDuration = meter.createHistogram("http_request_duration_ms", {
-//  description: "HTTP request duration in milliseconds",
-//  unit: "ms",
-//});
+// via denoflare environment bindings: https://denoflare.dev/cli/configuration
+type Env = { API_KEY?: string, DEBUG?: string, cloudflareUrl?: string, supabaseUrl?: string, deployUrl?: string, lambdaUrl?: string };
 
 
 const fetchResponse = async ( myurl: string, dsturl: string, onlysave: boolean, parse_feed: boolean, env: Env ): Promise<any> => {
-
-AbortSignal.timeout ??= function timeout(ms) {
-  const ctrl = new AbortController()
-  setTimeout(() => ctrl.abort(), ms)
-  return ctrl.signal
-}
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
         method: "GET",
@@ -48,17 +34,7 @@ AbortSignal.timeout ??= function timeout(ms) {
       });
     //console.log(returnres)
     returnres["content"]=await response.text()
-    //returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
-    const date = new Date()
-    const year = date.getUTCFullYear()  
-    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0')  
-    const day = date.getUTCDate().toString().padStart(2, '0')
-    const hours = date.getUTCHours().toString().padStart(2, '0')  
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0')  
-    //const seconds = date.getUTCSeconds().toString().padStart(2, '0')  
-    //const milliseconds = date.getUTCMilliseconds().toString().padStart(3, '0')
-    //const utc = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
-    returnres["time_fetched"]=`${year}-${month}-${day}_${hours}.${minutes}`
+    returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
     if(dsturl!="dontsave") {
         let savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
         //console.log("saving "+myurl+" AS "+savename)
@@ -77,7 +53,6 @@ AbortSignal.timeout ??= function timeout(ms) {
            }
            let sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
-            signal: AbortSignal.timeout(55000),
             method: 'PUT',
             body: compressed
           })
@@ -158,7 +133,6 @@ export default {
             let logstr=targetpath+" | "
             const foldcheckres = await fetch(saveurl+targetpath, {
                 method: "PROPFIND",
-                signal: AbortSignal.timeout(25000),
                 headers: { "Depth": 1 }
               });
             if(accepted_propfn.includes(foldcheckres.status)) {
@@ -171,7 +145,6 @@ export default {
             } else {
                 console.log("MAKE FOLDER "+targetpath + " (foldcheck_status:"+foldcheckres.status+") ")
                 const foldresponse = await fetch(saveurl+targetpath, {
-                    signal: AbortSignal.timeout(25000),
                     method: "MKCOL",
                   });
                 
@@ -238,10 +211,9 @@ export default {
                             rejected++;
                             all_rejected++;
                             try {
-                               console.log("status: "+result.reason.toString().split("at ", 0).join(" ++ "))
+                            console.log("status: "+result.stack.split("\n", 2).join(" ++ "))
                             } catch (e) {
-                                //console.log(JSON.stringify(result))
-                                console.log("REJECT: "+typeof(result.reason)+" | ",result.reason)
+                                console.log(result)
                             }
 
                           } 
@@ -274,14 +246,6 @@ export default {
         headers: { "content-type": "text/html" },
       });
     }
-  if (req.pathname === "/favicon.ico") {
-    return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
-  }
-  if (req.pathname === "/robots.txt") {
-    return new Response("User-agent: *"+"\n"+"Disallow: /", {
-    headers: { "content-type": "text/plain" },
-  });
-  }
 return new Response("Hello_from_fetch GET", {
     headers: { "content-type": "text/html" },
   });
