@@ -113,6 +113,19 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
 }
 
 export default async function handler(req: Request,context) {
+    if (req.method === "GET") {
+    if (req.pathname === "/favicon.ico") {
+        return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
+      }
+      if (req.pathname === "/robots.txt") {
+        return new Response("User-agent: *"+"\n"+"Disallow: /", {
+        headers: { "content-type": "text/plain" },
+      });
+      }
+    return new Response("Hello_from_fetch GET", {
+        headers: { "content-type": "text/html" },
+      });
+    }
     if (req.method === "POST") {
         let mytoken= Deno.env.get("API_KEY")
         let returnobj={}
@@ -273,16 +286,5 @@ export default async function handler(req: Request,context) {
     return new Response("Hello_from_fetch POST", {
         headers: { "content-type": "text/html" },
       });
-    }
-  if (req.pathname === "/favicon.ico") {
-    return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
-  }
-  if (req.pathname === "/robots.txt") {
-    return new Response("User-agent: *"+"\n"+"Disallow: /", {
-    headers: { "content-type": "text/plain" },
-  });
-  }
-return new Response("Hello_from_fetch GET", {
-    headers: { "content-type": "text/html" },
-  });
+    } // end post
 }

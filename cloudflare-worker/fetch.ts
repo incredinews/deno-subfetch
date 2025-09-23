@@ -19,11 +19,11 @@ import { parseFeed } from "../netlify/edge-functions/deno_rss_1.1.1/mod.ts";//im
 //  unit: "ms",
 //});
 
-AbortSignal.timeout ??= function timeout(ms) {
-  const ctrl = new AbortController()
-  setTimeout(() => ctrl.abort(), ms)
-  return ctrl.signal
-}
+//AbortSignal.timeout ??= function timeout(ms) {
+//  const ctrl = new AbortController()
+//  setTimeout(() => ctrl.abort(), ms)
+//  return ctrl.signal
+//}
 
 // via denoflare environment bindings: https://denoflare.dev/cli/configuration
 type Env = { API_KEY?: string, DEBUG?: string, cloudflareUrl?: string, supabaseUrl?: string, deployUrl?: string, lambdaUrl?: string };
@@ -108,6 +108,19 @@ export default {
 
     // standard workers fetch handler
     async fetch(req: Request, env: Env): Promise<Response> {
+    if (req.method === "GET") {
+    if (req.pathname === "/favicon.ico") {
+        return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
+      }
+      if (req.pathname === "/robots.txt") {
+        return new Response("User-agent: *"+"\n"+"Disallow: /", {
+        headers: { "content-type": "text/plain" },
+      });
+      }
+    return new Response("Hello_from_fetch GET", {
+        headers: { "content-type": "text/html" },
+      });
+    }
     if (req.method === "POST") {
         let mytoken= env.API_KEY
         let returnobj={}
@@ -233,11 +246,11 @@ export default {
                             rejected++;
                             all_rejected++;
                             try {
-                               console.log("status: "+result.reason.toString().split("at ", 0).join(" ++ "))
+                            console.log("status: "+result.stack.split("\n", 2).join(" ++ "))
                             } catch (e) {
-                                //console.log(JSON.stringify(result))
-                                console.log("REJECT: "+typeof(result.reason)+" | ",result.reason)
+                                console.log(result)
                             }
+
                           } 
                           if(result.status == 'fulfilled' && result.value ) {
                             rawresults.push(result.value)
@@ -267,17 +280,7 @@ export default {
     return new Response("Hello_from_fetch POST", {
         headers: { "content-type": "text/html" },
       });
-    }
-  if (req.pathname === "/favicon.ico") {
-    return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
-  }
-  if (req.pathname === "/robots.txt") {
-    return new Response("User-agent: *"+"\n"+"Disallow: /", {
-    headers: { "content-type": "text/plain" },
-  });
-  }
-return new Response("Hello_from_fetch GET", {
-    headers: { "content-type": "text/html" },
-  });
+    } // end post
+
     }
 }
