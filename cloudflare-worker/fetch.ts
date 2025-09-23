@@ -33,6 +33,7 @@ const fetchResponse = async ( myurl: string, dsturl: string, onlysave: boolean, 
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
         method: "GET",
+        signal: AbortSignal.timeout(55000),
         //headers: {
         //    "Content-Type": "application/json",
         //},
@@ -72,6 +73,7 @@ const fetchResponse = async ( myurl: string, dsturl: string, onlysave: boolean, 
            }
            let sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
+            signal: AbortSignal.timeout(55000),
             method: 'PUT',
             body: compressed
           })
@@ -152,6 +154,7 @@ export default {
             let logstr=targetpath+" | "
             const foldcheckres = await fetch(saveurl+targetpath, {
                 method: "PROPFIND",
+                signal: AbortSignal.timeout(25000),
                 headers: { "Depth": 1 }
               });
             if(accepted_propfn.includes(foldcheckres.status)) {
@@ -230,11 +233,11 @@ export default {
                             rejected++;
                             all_rejected++;
                             try {
-                            console.log("status: "+result.stack.split("\n", 2).join(" ++ "))
+                               console.log("status: "+result.reason.toString().split("at ", 0).join(" ++ "))
                             } catch (e) {
-                                console.log(result)
+                                //console.log(JSON.stringify(result))
+                                console.log("REJECT: "+typeof(result.reason)+" | ",result.reason)
                             }
-
                           } 
                           if(result.status == 'fulfilled' && result.value ) {
                             rawresults.push(result.value)
@@ -265,6 +268,14 @@ export default {
         headers: { "content-type": "text/html" },
       });
     }
+  if (req.pathname === "/favicon.ico") {
+    return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
+  }
+  if (req.pathname === "/robots.txt") {
+    return new Response("User-agent: *"+"\n"+"Disallow: /", {
+    headers: { "content-type": "text/plain" },
+  });
+  }
 return new Response("Hello_from_fetch GET", {
     headers: { "content-type": "text/html" },
   });
