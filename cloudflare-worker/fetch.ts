@@ -17,6 +17,12 @@ import { parseFeed } from "jsr:@mikaelporttila/rss@*";
 //  unit: "ms",
 //});
 
+//AbortSignal.timeout ??= function timeout(ms) {
+//  const ctrl = new AbortController()
+//  setTimeout(() => ctrl.abort(), ms)
+//  return ctrl.signal
+//}
+
 const fetchResponse = async ( myurl: string, dsturl: string, onlysave: boolean, parse_feed: boolean, env: Env ): Promise<any> => {
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
@@ -91,12 +97,6 @@ const fetchResponse = async ( myurl: string, dsturl: string, onlysave: boolean, 
 }
 
 export default {
-
-AbortSignal.timeout ??= function timeout(ms) {
-  const ctrl = new AbortController()
-  setTimeout(() => ctrl.abort(), ms)
-  return ctrl.signal
-}
 
     // standard workers fetch handler
     async fetch(req: Request, env: Env): Promise<Response> {
