@@ -4,7 +4,26 @@ import { fflate, format , sha256}    from './deps.ts';
 //import { parseFeed } from "https://deno.land/x/rss/mod.ts";
 //import { parseFeed } from "jsr:@mikaelporttila/rss@*";
 //import { parseFeed } from "https://jsr.io/@mikaelporttila/rss/1.1.1/mod.ts";
-import { parseFeed } from "../netlify/edge-functions/deno_rss_1.1.1/mod.ts";
+import { parseFeed } from "../netlify/edge-functions/deno_rss_1.1.1/mod.ts";//import { metrics, trace } from "npm:@opentelemetry/api@1";
+
+//// Create a tracer and meter for our application
+//const defaultname = "deno-subfetch"
+//const tracer = trace.getTracer(Deno.env.get('PORT') ?? defaultname , "1.0.0");
+//const meter = metrics.getMeter(Deno.env.get('PORT') ?? defaultname , "1.0.0");
+//// Create  metrics
+//const requestCounter = meter.createCounter("http_requests_total", {
+//  description: "Total number of HTTP requests",
+//});
+//const requestDuration = meter.createHistogram("http_request_duration_ms", {
+//  description: "HTTP request duration in milliseconds",
+//  unit: "ms",
+//});
+
+AbortSignal.timeout ??= function timeout(ms) {
+  const ctrl = new AbortController()
+  setTimeout(() => ctrl.abort(), ms)
+  return ctrl.signal
+}
 
 // via denoflare environment bindings: https://denoflare.dev/cli/configuration
 type Env = { API_KEY?: string, DEBUG?: string, cloudflareUrl?: string, supabaseUrl?: string, deployUrl?: string, lambdaUrl?: string };
