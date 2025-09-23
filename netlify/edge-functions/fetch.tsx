@@ -1,18 +1,33 @@
 import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
 import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
 import { sha256 }    from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
-//import { parseFeed } from "https://deno.land/x/rss/mod.ts";
-//import { parseFeed } from "jsr:@mikaelporttila/rss@*";
-//import { parseFeed } from "https://jsr.io/@mikaelporttila/rss/1.1.1/mod.ts";
-import { parseFeed } from "./deno_rss_1.1.1/mod.ts";
+import { parseFeed } from "jsr:@mikaelporttila/rss@*";
+//import { metrics, trace } from "npm:@opentelemetry/api@1";
 
+//// Create a tracer and meter for our application
+//const defaultname = "deno-subfetch"
+//const tracer = trace.getTracer(Deno.env.get('PORT') ?? defaultname , "1.0.0");
+//const meter = metrics.getMeter(Deno.env.get('PORT') ?? defaultname , "1.0.0");
+//// Create  metrics
+//const requestCounter = meter.createCounter("http_requests_total", {
+//  description: "Total number of HTTP requests",
+//});
+//const requestDuration = meter.createHistogram("http_request_duration_ms", {
+//  description: "HTTP request duration in milliseconds",
+//  unit: "ms",
+//});
 
-
+AbortSignal.timeout ??= function timeout(ms) {
+  const ctrl = new AbortController()
+  setTimeout(() => ctrl.abort(), ms)
+  return ctrl.signal
+}
 
 const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,parse_feed: boolean): Promise<any> => {
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
         method: "GET",
+        signal: AbortSignal.timeout(55000),
         //headers: {
         //    "Content-Type": "application/json",
         //},
@@ -63,6 +78,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
            }
            let sendtourl=dsturl+savename
            const uploadres=await fetch(sendtourl, {
+            signal: AbortSignal.timeout(55000),
             method: 'PUT',
             body: compressed
           })
@@ -140,6 +156,7 @@ export default async function handler(req: Request,context) {
             let logstr=targetpath+" | "
             const foldcheckres = await fetch(saveurl+targetpath, {
                 method: "PROPFIND",
+                signal: AbortSignal.timeout(25000),
                 headers: { "Depth": 1 }
               });
             if(accepted_propfn.includes(foldcheckres.status)) {
@@ -152,6 +169,7 @@ export default async function handler(req: Request,context) {
             } else {
                 console.log("MAKE FOLDER "+targetpath + " (foldcheck_status:"+foldcheckres.status+") ")
                 const foldresponse = await fetch(saveurl+targetpath, {
+                    signal: AbortSignal.timeout(25000),
                     method: "MKCOL",
                   });
                 
@@ -223,7 +241,6 @@ export default async function handler(req: Request,context) {
                                 //console.log(JSON.stringify(result))
                                 console.log("REJECT: "+typeof(result.reason)+" | ",result.reason)
                             }
-
                           } 
                           if(result.status == 'fulfilled' && result.value ) {
                             rawresults.push(result.value)
@@ -245,19 +262,19 @@ export default async function handler(req: Request,context) {
         returnobj.status="OK"
         returnobj.msg="DONE"
         returnobj.results=rawresults
-        //try {
-        //    gc()
-        //} catch(e) { console.log("gc failed w:"+e)}
-        //return new Response(JSON.stringify(returnobj))
+        try {
+            gc()
+        } catch(e) { console.log("gc failed w:"+e)}
+        return new Response(JSON.stringify(returnobj))
     }
     return new Response("Hello_from_fetch POST", {
         headers: { "content-type": "text/html" },
       });
     }
-  if (Request.pathname === "/favicon.ico") {
+  if (req.pathname === "/favicon.ico") {
     return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
   }
-  if (Request.pathname === "/robots.txt") {
+  if (req.pathname === "/robots.txt") {
     return new Response("User-agent: *"+"\n"+"Disallow: /", {
     headers: { "content-type": "text/plain" },
   });
