@@ -54,12 +54,23 @@ const fetchResponse = async ( myurl: string, dsturl: string, onlysave: boolean, 
       });
     //console.log(returnres)
     returnres["content"]=await response.text()
-    returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
+    //returnres["time_fetched"]=format(new Date(),"yyyy-MM-dd_HH.mm",{ utc: true })
+    const date = new Date()
+    const year = date.getUTCFullYear()  
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0')  
+    const day = date.getUTCDate().toString().padStart(2, '0')
+    const hours = date.getUTCHours().toString().padStart(2, '0')  
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0')  
+    //const seconds = date.getUTCSeconds().toString().padStart(2, '0')  
+    //const milliseconds = date.getUTCMilliseconds().toString().padStart(3, '0')
+    //const utc = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
+    returnres["time_fetched"]=`${year}-${month}-${day}_${hours}.${minutes}`
     if(dsturl!="dontsave") {
         let savename=sha256(myurl, "utf8", "hex")+"_"+returnres["time_fetched"]+".json.gz"
         //console.log("saving "+myurl+" AS "+savename)
        if (env.DEBUG == "true") {
                 console.log("saving to: "+savename)
+                
         }
         try {
            //const buf = fflate.strToU8(JSON.stringify(returnres));
@@ -109,10 +120,12 @@ export default {
     // standard workers fetch handler
     async fetch(req: Request, env: Env): Promise<Response> {
     if (req.method === "GET") {
-    if (req.pathname === "/favicon.ico") {
-        return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
+      let reqpath=new URL(req.url).pathname
+      if (reqpath == "/favicon.ico") {
+        let myresp= new Response();
+        return myresp.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
       }
-      if (req.pathname === "/robots.txt") {
+      if (reqpath == "/robots.txt") {
         return new Response("User-agent: *"+"\n"+"Disallow: /", {
         headers: { "content-type": "text/plain" },
       });

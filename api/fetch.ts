@@ -114,10 +114,12 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
 
 export default async function handler(req: Request,context) {
     if (req.method === "GET") {
-    if (req.pathname === "/favicon.ico") {
-        return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
+      let reqpath=new URL(req.url).pathname
+      if (reqpath == "/favicon.ico") {
+        let myresp= new Response();
+        return myresp.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
       }
-      if (req.pathname === "/robots.txt") {
+      if (reqpath == "/robots.txt") {
         return new Response("User-agent: *"+"\n"+"Disallow: /", {
         headers: { "content-type": "text/plain" },
       });
