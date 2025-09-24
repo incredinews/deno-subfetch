@@ -113,8 +113,7 @@ export default async function handler(req: Request,context) {
     if (req.method === "GET") {
       let reqpath=new URL(req.url).pathname
       if (reqpath == "/favicon.ico") {
-        let myresp= new Response();
-        return myresp.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
+        return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
       }
       if (reqpath == "/robots.txt") {
         return new Response("User-agent: *"+"\n"+"Disallow: /", {
