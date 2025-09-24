@@ -15,12 +15,13 @@ function outlog() {
    ln -s  /tmp/cache/deno     /root/.cache/deno
    mkdir /tmp/deno
    #export DENO_DIR=/tmp/deno
-   cd /app ;deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch index.ts 2>&1|grep -v "Download"
+   cd /app ;deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch.real index.ts 2>&1|grep -v "Download"
    du -m -s /root/.deno /root/.cache/deno /app /tmp/deno
    #rm -rf /root/.deno /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
    rm -rf /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
-   test -e /usr/bin/subfetch || echo "/usr/bin/subfetch missing after compile"
-   test -e /usr/bin/subfetch || ln -s /usr/bin/subfetch.orig /usr/bin/subfetch
+   test -e /usr/bin/subfetch.real || echo "/usr/bin/subfetch missing after compile"
+   test -e /usr/bin/subfetch.real || ln -s /usr/bin/subfetch.orig /usr/bin/subfetch
+   test -e /usr/bin/subfetch.real && ln -s /usr/bin/subfetch.real /usr/bin/subfetch
    echo "done compiling"
 }
 
@@ -30,7 +31,7 @@ test -e /etc/connector.conf &&  ( echo "start conn..."; while (true);do sleep 2;
 
 #date +%s > /tmp/drain_127.0.0.1_10002
 echo 10001 > /tmp/myport.fetch
-while (true); do 
+while (test -e /usr/bin/subfetch); do 
 #myport=10001
 
 #for m in 1 2 3 4 5;do 
@@ -41,10 +42,14 @@ myport=$(cat /tmp/myport.fetch)
 [[ "$DEBUG"  == "true" ]] && echo "SWITCH_PORT: $myport"
 export PORT=$myport
 test -e /tmp/drain_127.0.0.1_$myport  && rm /tmp/drain_127.0.0.1_$myport ;
-timeout 420 /usr/bin/subfetch | outlog &
-sleep 333 ; 
+timeout 333 /usr/bin/subfetch | outlog &
+sleep 246 ; 
 ( sleep 10 ; touch  /tmp/drain_127.0.0.1_$myport ) &
 
 [[ "$myport" == "10001" ]] && (echo 10002 > /tmp/myport.fetch  )
 [[ "$myport" == "10002" ]] && (echo 10001 > /tmp/myport.fetch  )
+test -e /usr/bin/subfetch || (
+   test -e /usr/bin/subfetch.real || ln -s /usr/bin/subfetch.orig /usr/bin/subfetch
+   test -e /usr/bin/subfetch.real && ln -s /usr/bin/subfetch.real /usr/bin/subfetch
+)
 done
