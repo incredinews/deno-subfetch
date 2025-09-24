@@ -112,10 +112,11 @@ const port = parseInt(Deno.env.get('PORT') ?? '8000')
 //Deno.serve({ hostname: '0.0.0.0', port: port }, async (req: Request) =>  { 
 Deno.serve({ hostname: "::", port: port }, async (req: Request) =>  { 
     if (req.method === "GET") {
-    if (req.pathname === "/favicon.ico") {
-        return Response.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
+      if (req.pathname == "/favicon.ico") {
+        let myresp= new Response();
+        return myresp.redirect("https://img.icons8.com/?size=80&id=jHTpT63mCPmd&format=png", 302);
       }
-      if (req.pathname === "/robots.txt") {
+      if (req.pathname == "/robots.txt") {
         return new Response("User-agent: *"+"\n"+"Disallow: /", {
         headers: { "content-type": "text/plain" },
       });
