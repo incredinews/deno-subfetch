@@ -10,7 +10,7 @@ COPY index.ts /app/
 RUN bash -c "cd /app ; deno cache --allow-import /app/index.ts" &&  deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch /app/index.ts && cp /usr/bin/subfetch /usr/bin/subfetch.orig
 
 FROM debian:bookworm
-RUN apt-get update && apt-get -y install --no-install-recommends ca-certificates curl bash unzip procps  && (curl -fsSL https://deno.land/install.sh | bash && ln -s /root/.deno/bin/deno /usr/bin/deno ) && (find /var/cache/apt/archives /var/lib/apt/lists -type f -delete || true ) && mkdir /app
+RUN apt-get update && apt-get -y install --no-install-recommends ca-certificates curl bash unzip procps jq  && (curl -fsSL https://deno.land/install.sh | bash && ln -s /root/.deno/bin/deno /usr/bin/deno ) && (find /var/cache/apt/archives /var/lib/apt/lists -type f -delete || true ) && mkdir /app
 WORKDIR /app
 COPY --from=builder /usr/bin/subfetch /usr/bin/
 COPY --from=copylb  /gobetween        /usr/bin/
