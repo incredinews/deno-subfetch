@@ -11,19 +11,22 @@ function outlog() {
     echo "RECOMPILING..."
    #cp /usr/bin/subfetch /usr/bin/subfetch.prev
    mkdir /tmp/cache
-   mv     /root/.cache/deno   /tmp/cache/deno 
-   ln -s  /tmp/cache/deno     /root/.cache/deno
+   test -e /root/.cache/deno || mkdir /root/.cache/deno
+   mv     /root/.cache/deno    /tmp/cache/deno 
+   ln -s  /tmp/cache/deno      /root/.cache/deno
    mkdir /tmp/deno
    #export DENO_DIR=/tmp/deno
    cd /app ;deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch.real index.ts 2>&1|grep -v "Download"
    du -m -s /root/.deno /root/.cache/deno /app /tmp/deno
    #rm -rf /root/.deno /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
    rm -rf /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
-   test -e /usr/bin/subfetch.real || echo "/usr/bin/subfetch missing after compile"
-   test -e /usr/bin/subfetch.real || ln -s /usr/bin/subfetch.orig /usr/bin/subfetch
-   test -e /usr/bin/subfetch.real && ln -s /usr/bin/subfetch.real /usr/bin/subfetch
+   test -e /usr/bin/subfetch.real || echo "/usr/bin/subfetch.real missing after compile"
    echo "done compiling"
 }
+test -e /usr/bin/subfetch || (
+   test -e /usr/bin/subfetch.real || ln -s /usr/bin/subfetch.orig /usr/bin/subfetch
+   test -e /usr/bin/subfetch.real && ln -s /usr/bin/subfetch.real /usr/bin/subfetch
+)
 
 test -e /etc/connector.conf &&  ( echo "start conn..."; while (true);do sleep 2;/connector --config /etc/connector.conf  2>&1 |grep -v -e decryp -e key -e keepalive -e ndshake -e TUN -e Interface -e encryp ;done) &
 
