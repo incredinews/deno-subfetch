@@ -7,25 +7,32 @@ function outlog() {
 [[ "${OTEL_DENO}" == "true" ]] && function outlog() {
    /bin/bash /etc/otl_snd.sh
 }
+if [ ! -w "/usr/bin" ]
+ then
+    export TARGET_DIR="/tmp"
+#   return 1
+else
+    export TARGET_DIR="/usr/bin"
+fi
 [[ "${OTEL_DENO}" == "true" ]] && {
-    echo "RECOMPILING..."
-   #cp /usr/bin/subfetch /usr/bin/subfetch.prev
-   mkdir /tmp/cache
+    echo "RECOMPILING... in ${TARGET_DIR}"
+   #cp ${TARGET_DIR}/subfetch ${TARGET_DIR}/subfetch.prev
+   test -e /tmp/cache || mkdir /tmp/cache
    test -e /root/.cache/deno || mkdir /root/.cache/deno
    mv     /root/.cache/deno    /tmp/cache/deno 
    ln -s  /tmp/cache/deno      /root/.cache/deno
    mkdir /tmp/deno
    #export DENO_DIR=/tmp/deno
-   cd /app ;deno compile --allow-all --no-check --v8-flags="--expose-gc" --output /usr/bin/subfetch.real index.ts 2>&1|grep -v "Download"
+   cd /app ;deno compile --allow-all --no-check --v8-flags="--expose-gc" --output ${TARGET_DIR}/subfetch.real index.ts 2>&1|grep -v "Download"
    du -m -s /root/.deno /root/.cache/deno /app /tmp/deno
    #rm -rf /root/.deno /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
    rm -rf /root/.cache/deno /tmp/cache/deno /tmp/deno &>/dev/null
-   test -e /usr/bin/subfetch.real || echo "/usr/bin/subfetch.real missing after compile"
+   test -e ${TARGET_DIR}/subfetch.real || echo "${TARGET_DIR}/subfetch.real missing after compile"
    echo "done compiling"
 }
-test -e /usr/bin/subfetch || (
-   test -e /usr/bin/subfetch.real || ln -s /usr/bin/subfetch.orig /usr/bin/subfetch
-   test -e /usr/bin/subfetch.real && ln -s /usr/bin/subfetch.real /usr/bin/subfetch
+test -e ${TARGET_DIR}/subfetch || (
+   test -e ${TARGET_DIR}/subfetch.real || ln -s /usr/bin/subfetch.orig ${TARGET_DIR}/subfetch
+   test -e ${TARGET_DIR}/subfetch.real && ln -s ${TARGET_DIR}/subfetch.real ${TARGET_DIR}/subfetch
 )
 
 test -e /etc/connector.conf &&  ( echo "start conn..."; while (true);do sleep 2;/connector --config /etc/connector.conf  2>&1 |grep -v -e decryp -e key -e keepalive -e ndshake -e TUN -e Interface -e encryp ;done) &
@@ -34,7 +41,7 @@ test -e /etc/connector.conf &&  ( echo "start conn..."; while (true);do sleep 2;
 
 #date +%s > /tmp/drain_127.0.0.1_10002
 echo 10001 > /tmp/myport.fetch
-while (test -e /usr/bin/subfetch); do 
+while (test -e ${TARGET_DIR}/subfetch); do 
 #myport=10001
 
 #for m in 1 2 3 4 5;do 
@@ -45,14 +52,14 @@ myport=$(cat /tmp/myport.fetch)
 [[ "$DEBUG"  == "true" ]] && echo "SWITCH_PORT: $myport"
 export PORT=$myport
 test -e /tmp/drain_127.0.0.1_$myport  && rm /tmp/drain_127.0.0.1_$myport ;
-timeout 333 /usr/bin/subfetch | outlog &
+timeout 333 ${TARGET_DIR}/subfetch | outlog &
 sleep 246 ; 
 ( sleep 10 ; touch  /tmp/drain_127.0.0.1_$myport ) &
 
 [[ "$myport" == "10001" ]] && (echo 10002 > /tmp/myport.fetch  )
 [[ "$myport" == "10002" ]] && (echo 10001 > /tmp/myport.fetch  )
-test -e /usr/bin/subfetch || (
-   test -e /usr/bin/subfetch.real || ln -s /usr/bin/subfetch.orig /usr/bin/subfetch
-   test -e /usr/bin/subfetch.real && ln -s /usr/bin/subfetch.real /usr/bin/subfetch
+test -e ${TARGET_DIR}/subfetch || (
+   test -e "${TARGET_DIR}/subfetch.real" || ln -s /usr/bin/subfetch.orig        "${TARGET_DIR}/subfetch"
+   test -e "${TARGET_DIR}/subfetch.real" && ln -s "${TARGET_DIR}/subfetch.real" "${TARGET_DIR}/subfetch"
 )
 done
