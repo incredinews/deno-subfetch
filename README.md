@@ -1,45 +1,48 @@
-# deno-subfetch
+# ⚡ Deno Starter Function
 
+A simple starter function. Edit `src/main.ts` to get started and create something awesome! 🚀
 
+## 🧰 Usage
 
-### Netlify
+### GET /ping
 
-* deploy via git..
-* set `API_KEY`
+- Returns a "Pong" message.
 
-### Deno Deploy
-* deploy via git..
-* set `API_KEY`
+**Response**
 
-### Cloudflare
-* create a .denoflare from the example and set `API_KEY` in there
-* then use denoflare ( note: your worker will be named main unless you change that with `--name yourname` )
- ```
- deno install --global --allow-import=denopkg.com:443,jsr.io:443,cdn.skypack.dev:443,raw.githubusercontent.com:443,deno.land:443  --allow-write --unstable-worker-options --allow-read --allow-net --allow-env --allow-run   --name denoflare --force https://raw.githubusercontent.com/skymethod/denoflare/3a875145982d0b288dd864cb2ef1e00552b59cae/cli/cli.ts
- 
- #echo ##testing
- #denoflare serve main --bundle 'backend=module'
+Sample `200` Response:
 
- echo #deploy
- denoflare push main --bundle 'backend=module'
- 
- ```
-
-## deno serve ( untested )
-```
-deno run --port $RANDOM -A index.ts
+```text
+Pong
 ```
 
-## deno serve ( untested )
-```
-deno serve --port $RANDOM -A index_as_module.ts
+### GET, POST, PUT, PATCH, DELETE /
+
+- Returns a "Learn More" JSON response.
+
+**Response**
+
+Sample `200` Response:
+
+```json
+{
+  "motto": "Build like a team of hundreds_",
+  "learn": "https://appwrite.io/docs",
+  "connect": "https://appwrite.io/discord",
+  "getInspired": "https://builtwith.appwrite.io"
+}
 ```
 
-example with logging fallback for debian openbsd etc. where otlp does not properly work , use the attached script and set it up like e.g. in the following part
-```
-#/bin/bash 
-echo 'export OTEL_EXPORTER_OTLP_ENDPOINT=https://your-logger/ ;export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=https://your-logger/;export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://your-logger/;export OTEL_DENO=true;export OTEL_DENO_CONSOLE=replace;export OTEL_SERVICE_NAME=fetch;export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic acbdef1234567890";export API_KEY=youtAPIKey111;' >  ~/domains/your-domain.lan/exports.tmp
-( screen -ls |grep    ftch |grep Dead -q && screen -wipe &>/dev/null ) 
-screen -ls |grep -q ftch               || screen -dmS ftch bash -c 'cd ~/domains/your-domain.lan/ ;test -e exports.tmp && echo exports found && source exports.tmp && rm exports.tmp & export API_KEY=yourAPIKey;export PORT=$(/usr/local/hoster-tool/bin/hoster-tool port list|grep -e deno -e dno |cut -d" " -f1|head -n1);deno run --allow-import --allow-net   --allow-env index.ts 2>&1 | bash otl_snd.sh'
+## ⚙️ Configuration
 
-```
+| Setting           | Value                    |
+| ----------------- | ------------------------ |
+| Runtime           | Deno (1.35)              |
+| Entrypoint        | `src/main.ts`            |
+| Build Commands    | `deno cache src/main.ts` |
+| Permissions       | `any`                    |
+| Timeout (Seconds) | 15                       |
+
+## 🔒 Environment Variables
+
+No environment variables required.
