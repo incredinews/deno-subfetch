@@ -29,7 +29,7 @@ const fetchResponse = async (myurl: string,dsturl: string,onlysave: boolean,pars
     //console.log("thread for " + myurl)
     const response = await fetch(myurl, {
         method: "GET",
-        signal: AbortSignal.timeout(55000),
+        signal: AbortSignal.timeout(42000),
         //headers: {
         //    "Content-Type": "application/json",
         //},
