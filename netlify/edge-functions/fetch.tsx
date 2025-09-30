@@ -1,6 +1,6 @@
-//import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
-import * as fflate from './fflate.js';
-// to get it : https://github.com/101arrowz/fflate/issues/49
+import * as fflate   from 'https://cdn.skypack.dev/fflate@0.8.2?min';
+//import * as fflate from './fflate.js';
+//// to get it : https://github.com/101arrowz/fflate/issues/49
 import { format }    from "https://deno.land/std@0.91.0/datetime/mod.ts";
 import { sha256 }    from "https://denopkg.com/chiefbiiko/sha256@v1.0.0/mod.ts";
 import { parseFeed } from "jsr:@mikaelporttila/rss@*";
